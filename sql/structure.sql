@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS holidays;
+DROP TABLE IF EXISTS settings;
 DROP TABLE IF EXISTS duties;
 DROP TABLE IF EXISTS attendences;
 DROP TABLE IF EXISTS users;
@@ -39,4 +41,22 @@ CREATE TABLE duties (
 	, dut_fri   BIT(1)
 	, PRIMARY KEY (dut_user, dut_week)
 	, CONSTRAINT dut_user_fk FOREIGN KEY (dut_user) REFERENCES users(usr_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE settings (
+	  set_id        INT(11)       NOT NULL  AUTO_INCREMENT
+	, set_start     DATE          NOT NULL                  COMMENT 'The first day of the school year'
+	, set_end       DATE          NOT NULL                  COMMENT 'The last day of the school year'
+	, PRIMARY KEY (set_id)
+);
+
+INSERT INTO settings VALUES (1, '2015-09-14', '2016-08-24');
+
+CREATE TABLE holidays (
+	  hol_id     INT(11)       NOT NULL  AUTO_INCREMENT
+	, hol_start  DATE          NOT NULL                  COMMENT 'The first day of the holidays'
+	, hol_end    DATE          NOT NULL                  COMMENT 'The last day of the holidays'
+	, hol_weeks  VARCHAR(100)                            COMMENT 'Contains all weeks of the holidays. Also weeks with only one holiday!'
+	, PRIMARY KEY (hol_id)
+	, UNIQUE KEY (hol_start, hol_end)
 );

@@ -37,10 +37,6 @@ header('Content-Type: text/html; Charset=UTF-8');
 // Load all needed stuff
 require_once DIR.'/php/includes/include.php';
 
-// Create a DB connection
-global $db;
-$db = new Database();
-
 // Prepare statics for the page
 // Load the template
 $page = new AMWD\Page(DIR.'/php/layout.html');
@@ -58,12 +54,16 @@ $page->setFooter('&copy; '.date('Y').' BS Erlangen | <a href="'.URL.'/?p=imprint
 $page->addCSS(URL.'/css/bootstrap.css');
 $page->addCSS(URL.'/css/bootstrap-outline.css');
 $page->addCSS(URL.'/submodules/font-awesome/css/font-awesome.min.css');
+$page->addCSS(URL.'/submodules/datepicker/dist/css/bootstrap-datepicker3.min.css');
 $page->addCSS(URL.'/css/layout.css');
 $page->addCSS(URL.'/css/main.css');
 
 $page->addJS(URL.'/js/jquery.js');
 $page->addJS(URL.'/js/bootstrap.js');
+$page->addJS(URL.'/submodules/datepicker/dist/js/bootstrap-datepicker.min.js');
+$page->addJS(URL.'/submodules/datepicker/dist/locales/bootstrap-datepicker.de.min.js');
 $page->addJS(URL.'/js/api.js');
+$page->addJS(URL.'/js/main.js');
 
 // Load the contents
 require_once DIR.'/php/contents/load.php';

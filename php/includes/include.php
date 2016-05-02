@@ -15,4 +15,7 @@ require_once DIR.'/php/includes/page.php';
 
 require_once DIR.'/php/includes/session.php';
 
+global $db;
+$db = new Database();
+
 ?>

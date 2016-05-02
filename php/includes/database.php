@@ -89,6 +89,7 @@ WHERE
 	, usr_room          AS room
 	, usr_mobile        AS mobile
 	, usr_qualification AS qualification
+	, usr_permissions   AS permissions
 FROM
 	users
 WHERE
@@ -103,7 +104,11 @@ WHERE
 			
 			$res = $stmt->fetchAll(PDO::FETCH_OBJ);
 			if (count($res) == 1)
-				return $res[0];
+			{
+				$user = $res[0];
+				$user->permissions = explode(',', $user->permissions);
+				return $user;
+			}
 			
 			return null;
 		}
@@ -221,6 +226,159 @@ WHERE
 		
 		if (isset($user->permissions))
 			$stmt->bindValue(':perms', implode(',', $user->permissions));
+		
+		return $stmt->execute();
+	}
+	
+	public function addUser($user)
+	{
+		$sql = "INSERT INTO users (
+	  usr_email
+	, usr_name
+	, usr_password
+	, usr_mobile
+	, usr_class
+	, usr_room
+	, usr_qualification
+	, usr_permissions
+) VALUES (
+	  :email
+	, :name
+	, :password
+	, :mobile
+	, :class
+	, :room
+	, :quali
+	, :perms
+);";
+
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bindValue(':name', $user->name);
+		$stmt->bindValue(':email', $user->email);
+		$stmt->bindValue(':password', crypt($user->password, '$2a$07$'.md5(time()).'$'));
+		$stmt->bindValue(':class', $user->class);
+		$stmt->bindValue(':room', $user->room);
+		$stmt->bindValue(':mobile', $user->mobile);
+		$stmt->bindValue(':quali', $user->qualification);
+		$stmt->bindValue(':perms', implode(',', $user->permissions));
+		
+		if (!$stmt->execute())
+			return 0;
+		
+		return $this->conn->lastInsertId();
+	}
+	
+	public function deleteUser($id)
+	{
+		$sql = "DELETE FROM users WHERE usr_id = :id;";
+		
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bindValue(':id', $id);
+		
+		return $stmt->execute();
+	}
+	
+	public function getSettings()
+	{
+		$sql = "SELECT
+	  set_start    AS start
+	, set_end      AS end
+FROM
+	settings
+WHERE
+	set_id = 1
+;";
+
+		$stmt = $this->conn->prepare($sql);
+		$stmt->execute();
+		
+		$res = $stmt->fetch(PDO::FETCH_OBJ);
+		
+		return $res;
+	}
+	
+	public function setSettings($settings)
+	{
+		$sql = "UPDATE settings SET
+	  set_start   = :start
+	, set_end     = :end
+WHERE
+	set_id = 1
+;";
+
+		if ($settings->end <= $settings->start)
+			return false;
+
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bindValue(':start', date('Y-m-d', $settings->start));
+		$stmt->bindValue(':end', date('Y-m-d', $settings->end));
+		
+		return $stmt->execute();
+	}
+	
+	public function getHolidays()
+	{
+		$sql = "SELECT
+	  hol_id    AS id
+	, hol_start AS start
+	, hol_end   AS end
+	, hol_weeks AS weeks
+FROM
+	  holidays
+	, settings
+WHERE
+	set_start <= hol_end
+	AND
+	hol_start <= set_end
+ORDER BY
+	hol_start
+;";
+
+		$stmt = $this->conn->prepare($sql);
+		$stmt->execute();
+		
+		$res = $stmt->fetchAll(PDO::FETCH_OBJ);
+		foreach ($res as $r)
+		{
+			$r->weeks = explode(',', $r->weeks);
+		}
+		
+		return $res;
+	}
+	
+	public function setHolidays($range)
+	{
+		if ($range->id == 0)
+			$sql = "INSERT INTO holidays (hol_start,hol_end,hol_weeks) VALUES (:start, :end, :weeks);";
+		else
+			$sql = "UPDATE holidays SET hol_start = :start, hol_end = :end, hol_weeks = :weeks WHERE hol_id = :id;";
+		
+		$weeks = array();
+		for ($i = $range->start; $i <= $range->end; $i = strtotime('+1 day', $i))
+		{
+			if (!in_array(date('W', $i), $weeks))
+				$weeks[] = date('W', $i);
+		}
+		
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bindValue(':start', date('Y-m-d', $range->start));
+		$stmt->bindValue(':end', date('Y-m-d', $range->end));
+		$stmt->bindValue(':weeks', implode(',', $weeks));
+		if ($range->id > 0)
+			$stmt->bindValue(':id', intval($range->id));
+		
+		return $stmt->execute();
+	}
+	
+	public function deleteHolidays($id)
+	{
+		if ($id < 1)
+			return false;
+			
+		$sql = "DELETE FROM holidays WHERE hol_id = :id;";
+		
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bindValue(':id', intval($id));
 		
 		return $stmt->execute();
 	}

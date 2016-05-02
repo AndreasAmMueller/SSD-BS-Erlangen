@@ -1,5 +1,14 @@
 <?php
 
+if (empty($_SESSION['id']))
+{
+	$content = '<div class="alert alert-danger-outline">
+		<strong><span class="fa fa-exclamation-triangle"></span> Fehler:</strong> Nicht angemeldet.
+	</div>';
+	$page->setContent($content);
+	return;
+}
+
 $content = '
 <h1><span class="fa fa-users"></span> Personalübersicht</h1>
 <table class="table table-striped">

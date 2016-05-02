@@ -1,3 +1,6 @@
 [submodule "submodules/font-awesome"]
 	path = submodules/font-awesome
 	url = https://github.com/FortAwesome/Font-Awesome.git
+[submodule "submodules/datepicker"]
+	path = submodules/datepicker
+	url = https://github.com/eternicode/bootstrap-datepicker.git
