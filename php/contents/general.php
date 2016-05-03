@@ -23,13 +23,13 @@ $notify = '';
 if ($_POST)
 {
 	$obj = new stdClass();
-	
+
 	$start = trim($_POST['start']);
 	$end = trim($_POST['end']);
-	
+
 	$obj->start = strtotime($start);
 	$obj->end   = strtotime($end);
-	
+
 	switch ($_POST['action'])
 	{
 		case 'save':
@@ -72,7 +72,7 @@ if ($_POST)
 			if ($obj->start <= $obj->end)
 			{
 				$obj->id = intval($_POST['id']);
-			
+
 				if (!$db->setHolidays($obj))
 				{
 					$notify = '<div class="form-group">
@@ -140,7 +140,7 @@ $content = '
 <h1><span class="fa fa-cogs"></span> Allgemeine Einstellungen</h1>
 <div class="form-horizontal">
 	'.$notify.'
-	
+
 	<form method="post" action="'.URL.'/?p=general">
 	<div class="form-group">
 		<label class="control-label col-sm-2">Schuljahresbeginn</label>
@@ -148,27 +148,27 @@ $content = '
 			<input type="text" class="form-control datepicker" name="start" value="'.$start.'" placeholder="Erster Schultag (dd.mm.yyyy)">
 		</div>
 	</div>
-	
+
 	<div class="form-group">
 		<label class="control-label col-sm-2">Schuljahresende</label>
 		<div class="col-sm-10">
 			<input type="text" class="form-control datepicker" name="end" value="'.$end.'" placeholder="Letzter Schultag (dd.mm.yyyy)">
 		</div>
 	</div>
-	
+
 	<div class="form-group">
 		<div class="col-sm-offset-2 col-sm-10">
 			<button type="submit" class="btn btn-bs-outline" name="action" value="save">Speichern</button>
 		</div>
 	</div>
 	</form>
-	
+
 	<!-- ====================================================== -->
-	
+
 	<div class="form-group">
 		<label class="control-label col-sm-2">Schulferien</label>
 		<div class="col-sm-10">
-			<p class="form-control-static">Es werden nur die Ferien des aktuellen Schuljahres angezeigt</p>
+			<p class="form-control-static">Es werden nur die Ferien des aktuellen Schuljahres angezeigt.</p>
 			<table class="table table-striped">
 				<thead>
 					<tr>

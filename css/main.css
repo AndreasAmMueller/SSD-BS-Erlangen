@@ -1,3 +1,7 @@
+.need-js {
+	display: none;
+}
+
 .required:after {
 	content: '*';
 	color: #f00;

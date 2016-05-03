@@ -15,7 +15,8 @@
 @ini_set('display_errors', 'on');
 
 // Define the DIR variable
-define('DIR', str_replace('\\', '/', __DIR__));
+//define('DIR', str_replace('\\', '/', __DIR__));
+define('DIR', str_replace('\\', '/', '/var/www'));
 
 // Define the URL variable
 $url = str_replace($_SERVER['DOCUMENT_ROOT'], 'http://'.$_SERVER['HTTP_HOST'], DIR);

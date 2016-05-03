@@ -13,6 +13,7 @@ CREATE TABLE users (
 	, usr_class          VARCHAR(20)
 	, usr_room           VARCHAR(20)
 	, usr_qualification  TEXT
+	, usr_permissions    VARCHAR(255)
 	, PRIMARY KEY (usr_id)
 	, UNIQUE KEY (usr_email)
 );
@@ -26,7 +27,7 @@ CREATE TABLE attendences (
 	, att_wed   BIT(1)
 	, att_thu   BIT(1)
 	, att_fri   BIT(1)
-	, PRIMARY KEY (att_user, att_week)
+	, PRIMARY KEY (att_user, att_week, att_year)
 	, CONSTRAINT att_user_fk FOREIGN KEY (att_user) REFERENCES users(usr_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -39,7 +40,7 @@ CREATE TABLE duties (
 	, dut_wed   BIT(1)
 	, dut_thu   BIT(1)
 	, dut_fri   BIT(1)
-	, PRIMARY KEY (dut_user, dut_week)
+	, PRIMARY KEY (dut_user, dut_week, dut_year)
 	, CONSTRAINT dut_user_fk FOREIGN KEY (dut_user) REFERENCES users(usr_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -50,7 +51,7 @@ CREATE TABLE settings (
 	, PRIMARY KEY (set_id)
 );
 
-INSERT INTO settings VALUES (1, '2015-09-14', '2016-08-24');
+INSERT INTO settings VALUES (1, '2015-09-15', '2016-08-26');
 
 CREATE TABLE holidays (
 	  hol_id     INT(11)       NOT NULL  AUTO_INCREMENT
