@@ -15,27 +15,27 @@
 @ini_set('display_errors', 'on');
 
 // Define the DIR variable
-Sdefine('DIR', str_replace('\\', '/', __DIR__));
+define('DIR', str_replace('\\', '/', __DIR__));
 
 // Define the URL variable
 $url = str_replace($_SERVER['DOCUMENT_ROOT'], 'http://'.$_SERVER['HTTP_HOST'], DIR);
 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') $url = str_replace('http', 'https', $url);
 define('URL', $url);
 
-// Enforce using TLS encrypted connection (HTTPS)
-// Except: no HTTP Server
-if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on')
-{
-	header('HTTP/1.1 302 Found');
-	header('Location: '.str_replace('http:', 'https:', URL));
-	die('Please reload the page: <a href="'.str_replace('http:', 'https:', URL).'">'.str_replace('http:', 'https:', URL).'</a>');
-}
-
 // Define output content type
 header('Content-Type: text/html; Charset=UTF-8');
 
 // Load all needed stuff
 require_once DIR.'/php/includes/include.php';
+
+// Enforce using TLS encrypted connection (HTTPS)
+// Except: no HTTP Server
+if ($config['require_https'] && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on'))
+{
+	header('HTTP/1.1 302 Found');
+	header('Location: '.str_replace('http:', 'https:', URL));
+	die('Please reload the page: <a href="'.str_replace('http:', 'https:', URL).'">'.str_replace('http:', 'https:', URL).'</a>');
+}
 
 // Prepare statics for the page
 // Load the template
