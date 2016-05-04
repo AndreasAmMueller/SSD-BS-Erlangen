@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * load.php
+ *
+ * @author     Andreas Mueller <webmaster@am-wd.de>
+ * @copyright  (c) 2016 Andreas Mueller
+ * @license    MIT - http://am-wd.de/?p=about#license
+ */
+
+// Get current site
 $p = isset($_GET['p']) ? trim($_GET['p']) : 'default';
 
 // Left menu
@@ -34,6 +43,7 @@ else
 		if (in_array('manage', $_SESSION['permissions']))
 		{
 			$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-calendar-check-o"></span> Einteilen', URL.'/?p=duty', $p == 'duty'));
+			// Commented due to a missing implementation
 			//$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-phone"></span> Diensthandy', URL.'/?p=mobile', $p == 'mobile'));
 		}
 		if (in_array('admin', $_SESSION['permissions']))
@@ -47,6 +57,7 @@ else
 
 $page->addMenu($menu);
 
+// Load the site's content
 switch ($p)
 {
 	case 'login':

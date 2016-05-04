@@ -8,9 +8,8 @@
  * This class handles all database requests.
  *
  * @author   Andreas Mueller <webmaster@am-wd.de>
- * @version  v1.0-20160501
+ * @version  v1.0-20160504
  */
-
 class Database {
 
 	/**
@@ -231,6 +230,12 @@ WHERE
 		return $stmt->execute();
 	}
 
+	/**
+	 * Inserts a new user in the database.
+	 *
+	 * @param   object   $user  The user's information.
+	 * @return  integer         Zero on failure, otherwise the new id of the user.
+	 */
 	public function addUser($user)
 	{
 		$sql = "INSERT INTO users (
@@ -269,6 +274,12 @@ WHERE
 		return $this->conn->lastInsertId();
 	}
 
+	/**
+	 * Deletes a user by his id.
+	 *
+	 * @param   integer  $id  The user's unique ID in the database.
+	 * @return  boolean       True on success, otherwise false.
+	 */
 	public function deleteUser($id)
 	{
 		$sql = "DELETE FROM users WHERE usr_id = :id;";
@@ -279,6 +290,11 @@ WHERE
 		return $stmt->execute();
 	}
 
+	/**
+	 * Gets the beginning and the ending of a school year.
+	 *
+	 * @return  object  The dates.
+	 */
 	public function getSettings()
 	{
 		$sql = "SELECT
@@ -298,6 +314,12 @@ WHERE
 		return $res;
 	}
 
+	/**
+	 * Sets the beginning and the ending of a school year.
+	 *
+	 * @param   object   $settings  The dates.
+	 * @return  boolean             True on success, otherwise false.
+	 */
 	public function setSettings($settings)
 	{
 		$sql = "UPDATE settings SET
@@ -317,6 +339,11 @@ WHERE
 		return $stmt->execute();
 	}
 
+	/**
+	 * Gets the list with all inserted holidays for the current school year.
+	 *
+	 * @return  object[]  An array with all date ranges of holidays.
+	 */
 	public function getHolidays()
 	{
 		$sql = "SELECT
@@ -347,6 +374,12 @@ ORDER BY
 		return $res;
 	}
 
+	/**
+	 * Inserts or updates a holiday by its date range.
+	 *
+	 * @param   object   $range  The date range of the holiday.
+	 * @return  boolean          True on success, otherwise false.
+	 */
 	public function setHolidays($range)
 	{
 		if ($range->id == 0)
@@ -371,6 +404,12 @@ ORDER BY
 		return $stmt->execute();
 	}
 
+	/**
+	 * Deletes a holiday by it's id in the database.
+	 *
+	 * @param   integer  $id  The unique id from the database.
+	 * @return  boolean       True on success, otherwise false.
+	 */
 	public function deleteHolidays($id)
 	{
 		if ($id < 1)
@@ -384,6 +423,12 @@ ORDER BY
 		return $stmt->execute();
 	}
 
+	/**
+	 * Checks whether a unix timestamp is a holiday.
+	 *
+	 * @param   integer  $unix_time  Timestamp.
+	 * @return  boolean              True if it is a holiay, otherwise false.
+	 */
 	public function isHoliday($unix_time)
 	{
 		if (intval($unix_time) <= 0)
@@ -405,10 +450,15 @@ WHERE
 		$stmt->execute();
 
 		$res = $stmt->fetch(PDO::FETCH_OBJ);
-
 		return $res->count > 0;
 	}
 
+	/**
+	 * Gets all attendences by a user id.
+	 *
+	 * @param   integer   $id  The user's unique id.
+	 * @return  object[]       An array with attendences of a user.
+	 */
 	public function getAttendence($id)
 	{
 		$sql = "SELECT
@@ -438,6 +488,12 @@ ORDER BY
 		return $stmt->fetchAll(PDO::FETCH_OBJ);
 	}
 
+	/**
+	 * Gets all attendences of all users by a week.
+	 *
+	 * @param   integer   $week  The wanted week.
+	 * @return  object[]         An array with attendences of all users.
+	 */
 	public function getAttendenceWeek($week)
 	{
 		$sql = "SELECT
@@ -472,6 +528,13 @@ ORDER BY
 		return $stmt->fetchAll(PDO::FETCH_OBJ);
 	}
 
+	/**
+	 * Sets the attendences for a user for the current schoolyear.
+	 *
+	 * @param   integer   $id           The user's id.
+	 * @param   object[]  $attendences  An array with all attendences for the school year.
+	 * @return  boolean                 True on success, otherwise false.
+	 */
 	public function setAttendences($id, $attendences)
 	{
 		$sql = "SELECT YEAR(set_start) AS year FROM settings WHERE set_id = 1;";
@@ -519,6 +582,12 @@ ORDER BY
 		}
 	}
 
+	/**
+	 * Gets the disposed users for a week.
+	 *
+	 * @param   integer   $week  The wanted week.
+	 * @return  object[]         An array with all disposed users.
+	 */
 	public function getDuty($week)
 	{
 		$sql = "SELECT
@@ -551,6 +620,12 @@ ORDER BY
 		return $stmt->fetchAll(PDO::FETCH_OBJ);
 	}
 
+	/**
+	 * Sets the disposed users.
+	 *
+	 * @param   object   $duty  An object with the date information and an array with disposed users and times.
+	 * @return  boolean         True on success, otherwise false.
+	 */
 	public function setDuty($duty)
 	{
 		try
@@ -592,6 +667,12 @@ ORDER BY
 		}
 	}
 
+	/**
+	 * Gets the disposed users with flags for illness.
+	 *
+	 * @param   integer   $week  The wanted week.
+	 * @return  object[]         An array with disposed users.
+	 */
 	public function getPlan($week)
 	{
 		$sql = "SELECT
@@ -633,6 +714,13 @@ ORDER by
 		return $stmt->fetchAll(PDO::FETCH_OBJ);
 	}
 
+	/**
+	 * Sets the modified attendence for a user.
+	 *
+	 * @param   integer   $id           The user's id.
+	 * @param   object[]  $attendences  An array with all attendences for the next weeks.
+	 * @return  boolean                 True on success, otherwise false.
+	 */
 	public function setSick($id, $attendences)
 	{
 		$sql = "SELECT YEAR(set_start) AS year FROM settings WHERE set_id = 1;";

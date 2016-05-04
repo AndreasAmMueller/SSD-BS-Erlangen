@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * plan.php
+ *
+ * @author     Andreas Mueller <webmaster@am-wd.de>
+ * @copyright  (c) 2016 Andreas Mueller
+ * @license    MIT - http://am-wd.de/?p=about#license
+ */
+
 $week = isset($_POST['week']) ? intval($_POST['week']) : date('W');
 
 $onDuty = $db->getPlan($week);

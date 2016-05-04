@@ -24,8 +24,8 @@ $check_ip = false;
 session_name($session_name);
 
 // Check if there is a session given by $_GET.
-if (!empty($_GET[$session_name]))
-	session_id($_GET[$session_name]);
+/*if (!empty($_GET[$session_name]))
+	session_id($_GET[$session_name]);*/
 
 // Start the session.
 session_start();

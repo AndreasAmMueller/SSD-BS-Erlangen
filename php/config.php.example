@@ -1,5 +1,4 @@
 <?php
-
 global $config;
 $config = array();
 
@@ -10,5 +9,4 @@ $config['db_pass'] = '';
 $config['db_name'] = '';
 
 $config['require_https'] = false;
-
 ?>

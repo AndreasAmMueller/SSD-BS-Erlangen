@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * imprint.php
+ *
+ * @author     Andreas Mueller <webmaster@am-wd.de>
+ * @copyright  (c) 2016 Andreas Mueller
+ * @license    MIT - http://am-wd.de/?p=about#license
+ */
+
 $content = '
 <h1>Impressum</h1>
 <h4>Staatliche Berufsschule Erlangen</h4>

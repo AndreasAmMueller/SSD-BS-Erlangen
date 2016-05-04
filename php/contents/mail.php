@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * mails.php
+ *
+ * @author     Andreas Mueller <webmaster@am-wd.de>
+ * @copyright  (c) 2016 Andreas Mueller
+ * @license    MIT - http://am-wd.de/?p=about#license
+ */
+
 if (empty($_SESSION['id']))
 {
 	$content = '<div class="alert alert-danger-outline">

@@ -1,3 +1,21 @@
+/**
+ * layout.css
+ * (c) Andreas Mueller <webmaster@am-wd.de>
+ */
+
+/**
+ * Theming the bootstrap framework with the colors of the
+ * website of Staatliche Berufsschule Erlangen.
+ *
+ * Created for Bootstrap 3.3.6
+ *
+ * @author     Andreas Mueller <webmaster@am-wd.de>
+ * @copyright  (c) 2016 Andreas Mueller
+ * @license    MIT - http://am-wd.de/index.php?p=about#license
+ */
+
+/* --- General Styles
+------------------------------- */
 html {
 	position: relative;
 	min-height: 100%;
@@ -32,6 +50,8 @@ a:hover {
 	color: #2a6496;
 }
 
+/* --- The Footer
+------------------------------- */
 .footer {
 	position: absolute;
 	bottom: 0;
@@ -62,6 +82,8 @@ a:hover {
 	text-decoration: none;
 }
 
+/* --- The Navbar with Menu
+------------------------------- */
 .navbar-bs {
 	background: #fff;
 	border-bottom: 4px solid #cff1fc;
@@ -130,6 +152,8 @@ a:hover {
 	}
 }
 
+/* --- Buttons
+------------------------------- */
 .btn-bs {
 	color: #fff;
 	background: #1ab7ea;

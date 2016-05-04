@@ -1,3 +1,16 @@
+/**
+ * user.js
+ * (c) Andreas Mueller <webmaster@am-wd.de>
+ */
+
+if (typeof jQuery == 'undefined')
+	throw new Error('PHP-API requires jQuery');
+
+/**
+ * action_switch
+ * 
+ * En-/Disables fields due to the selected action, that should be perfomed.
+ */
 function action_switch() {
 	switch ($('select[name=action]').val()) {
 		case 'new':
@@ -41,6 +54,12 @@ function action_switch() {
 	}
 }
 
+/**
+ * user_switch
+ * 
+ * Loads more information corresponding to the selected user.
+ * These data are filled in the form fields.
+ */
 function user_switch() {
 	if ($('select[name=action]').val() == 'delete')
 		return;
@@ -84,12 +103,15 @@ function user_switch() {
 }
 
 $(function() {
+	// Prepare the form.
 	action_switch();
 	
+	// Show the fields, needed for the selected action.
 	$('select[name=action]').change(function() {
 		action_switch();
 	});
 	
+	// Load the data for the selected user.
 	$('select[name=user]').change(function() {
 		user_switch();
 	});

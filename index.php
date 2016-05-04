@@ -11,7 +11,6 @@
 // Report everything just to be sure it's clean code
 // But notices sucks some times
 @error_reporting(E_ALL ^ E_NOTICE);
-@error_reporting(E_ALL);
 @ini_set('display_errors', 'on');
 
 // Define the DIR variable
@@ -29,7 +28,7 @@ header('Content-Type: text/html; Charset=UTF-8');
 require_once DIR.'/php/includes/include.php';
 
 // Enforce using TLS encrypted connection (HTTPS)
-// Except: no HTTP Server
+// Except: it is disabled in the config
 if ($config['require_https'] && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on'))
 {
 	header('HTTP/1.1 302 Found');
@@ -52,10 +51,10 @@ $page->setFooter('&copy; '.date('Y').' BS Erlangen | <a href="'.URL.'/?p=imprint
 
 // Load CSS and JS files needed
 $page->addCSS('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css');
-$page->addCSS(URL.'/css/bootstrap-outline.css');
+$page->addCSS(URL.'/css/bootstrap-outline.min.css');
 $page->addCSS('https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css');
 $page->addCSS(URL.'/submodules/datepicker/dist/css/bootstrap-datepicker3.min.css');
-$page->addCSS(URL.'/css/layout.css');
+$page->addCSS(URL.'/css/layout.min.css');
 $page->addCSS(URL.'/css/main.css');
 
 $page->addJS('https://code.jquery.com/jquery-2.2.3.min.js');

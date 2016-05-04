@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * user.api.php
+ * (c) Andreas Mueller <webmaster@am-wd.de>
+ */
+
+/**
+ * Reads the user by his id from the database.
+ * 
+ * @param integer  $id  The user's ID in the database.
+ * 
+ * @return object|null  The user's information or null.
+ */
 function user_getUser($id)
 {
 	global $db;
@@ -9,6 +21,5 @@ function user_getUser($id)
 	
 	return $db->getUser($id);
 }
-
 
 ?>
