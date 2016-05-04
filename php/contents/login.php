@@ -16,7 +16,7 @@ if ($_POST)
 {
 	$mail = trim($_POST['email']);
 	$pass = trim($_POST['password']);
-	
+
 	$user = $db->getUserLogin($mail);
 	if ($user == null)
 	{
@@ -31,9 +31,9 @@ if ($_POST)
 		$user = $db->getUser($user->id);
 		$pw = substr(hash_hmac('md5', $user->email, time()), 0, 8);
 		$user->password = $pw;
-		
+
 		$db->updateUser($user);
-		
+
 		$text = 'Hallo '.$user->name.',
 
 Dein Passwort wurde zurückgesetzt.
@@ -41,9 +41,9 @@ Dein neues Passwort lautet: '.$pw.'
 
 Freundliche Grüße
   Der Admin';
-		
-		mail($email, '[SSD] Passwort vergessen', $text, "From: no-reply@".$_SERVER['HTTP_HOST'], '-fno-reply@'.$_SERVER['HTTP_HOST']);
-		
+
+		mail($mail, '[SSD] Passwort vergessen', $text, "From: no-reply@".$_SERVER['HTTP_HOST'], '-fno-reply@'.$_SERVER['HTTP_HOST']);
+
 		$error = '<div class="form-group">
 			<div class="alert alert-success-outline">
 				<span class="fa fa-check"></span> Neues Passwort versendet.
@@ -73,25 +73,25 @@ $content = '
 <div class="col-sm-4 col-sm-offset-4">
 	<form method="post" action="'.URL.'/?p=login">
 		'.$error.'
-		
+
 		<div class="form-group">
 			<label>E-Mail Adresse</label>
-			<input type="text" class="form-control" name="email">
+			<input type="email" class="form-control" name="email">
 		</div>
-		
+
 		<div class="form-group">
 			<label>Passwort</label>
 			<input type="password" class="form-control" name="password">
 		</div>
-		
+
 		<div class="form-group">
 			<button type="submit" class="btn btn-bs-outline" style="width: 100%" name="action" value="go">Login</button>
 		</div>
-		
+
 		<div class="form-group">
 			<button type="submit" class="btn btn-warning-outline" style="width: 100%" name="action" value="lost">Passwort vergessen</button>
 		</div>
-		
+
 	</form>
 </div>
 ';

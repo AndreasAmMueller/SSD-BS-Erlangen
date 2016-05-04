@@ -18,6 +18,8 @@ if (!in_array('manage', $_SESSION['permissions']))
 	return;
 }
 
+$page->addJS(URL.'/js/duty.js');
+
 function getDuty($duty, $attendence)
 {
 	if (count($duty) <= 0 || $attendence == null)
@@ -35,11 +37,64 @@ function getDuty($duty, $attendence)
 $week = isset($_POST['week']) ? intval($_POST['week']) : date('W');
 $notify = '';
 
-if (isset($_POST['action']) && $_POST['action'] == 'save')
+$settings = $db->getSettings();
+
+$yearstart = strtotime($settings->start);
+$yearend = strtotime($settings->end);
+
+if (isset($_POST['go']))
+{
+	if ($_POST['go'] == 'prev')
+		$new_week = $week - 1;
+	else
+		$new_week = $week + 1;
+
+	if ($new_week < date('W', $yearend) || date('W', $yearstart) < $new_week)
+		$week = $new_week;
+}
+else if (isset($_POST['action']) && $_POST['action'] == 'save')
 {
 	$page->setContent('<pre>'.print_r($_POST, 1).'</pre>');
-	return;
+
+	$dut = new stdClass();
+	$dut->week = $week;
+	$dut->year = date('Y', $yearstart);
+	$dut->duty = array();
+	foreach ($_POST as $key => $value)
+	{
+		$ar = explode('_', $key);
+		if (count($ar) != 3)
+			continue;
+
+		$id = intval($ar[1]);
+
+		if (!isset($dut->duty[$id]))
+			$dut->duty[$id] = new stdClass();
+
+		switch ($ar[2])
+		{
+			case 'mon': $dut->duty[$id]->mon = $value == 1; break;
+			case 'tue': $dut->duty[$id]->tue = $value == 1; break;
+			case 'wed': $dut->duty[$id]->wed = $value == 1; break;
+			case 'thu': $dut->duty[$id]->thu = $value == 1; break;
+			case 'fri': $dut->duty[$id]->fri = $value == 1; break;
+		}
+	}
+
+	if ($db->setDuty($dut))
+	{
+		$notify = '<div class="alert alert-success-outline">
+			<strong><span class="fa fa-check"></span></strong> Einteilung gespeichert.
+		</div>';
+	}
+	else
+	{
+		$notify = '<div class="alert alert-danger-outline">
+			<strong><span class="fa fa-exclamation-triangle"></span> Fehler:</strong> Einteilung konnte nicht gespeichert werden.
+		</div>';
+	}
 }
+
 
 
 $duty = $db->getDuty($week);
@@ -148,6 +203,10 @@ foreach ($attendence as $att)
 		$tmp.= '<td><input type="checkbox" name="usr_'.$att->id.'_fri" value="1"></td>';
 	}
 
+	$tmp.= '<td>
+		<button type="button" class="btn btn-success-outline btn-xs set-user" user="'.$att->id.'"><span class="fa fa-check-circle"></span></button>
+		<button type="button" class="btn btn-danger-outline btn-xs unset-user" user="'.$att->id.'"><span class="fa fa-trash"></span></button>
+	</td>';
 	$tmp.= '</tr>';
 
 	$list[] = $tmp;
@@ -158,13 +217,19 @@ $content = '
 <form method="post" action="'.URL.'/?p=duty" class="form-horizontal">
 	<div class="form-group">
 		<label class="control-label col-sm-2 col-xs-12">Kalenderwoche</label>
-		<div class="col-sm-9 col-xs-9">
-			<select name="week" class="form-control input-sm">
+		<div class="col-xs-3 col-sm-2 text-right hidden-xxs">
+			<button type="submit" class="btn btn-sm btn-bs-outline" name="go" value="prev"><span class="fa fa-chevron-left"></span> Vorherige</button>
+		</div>
+		<div class="col-xxs-12 col-xs-6 col-sm-6">
+			<select name="week" class="form-control input-sm" id="week">
 				'.implode(PHP_EOL, $week_select).'
 			</select>
 		</div>
-		<div class="col-sm-1 col-xs-3 text-right">
-			<button type="submit" class="btn btn-sm btn-bs-outline">Go</button>
+		<div class="col-xxs-6 col-xs-3 col-sm-2 text-right visible-xxs">
+			<button type="submit" class="btn btn-sm btn-bs-outline" name="go" value="prev"><span class="fa fa-chevron-left"></span> Vorherige</button>
+		</div>
+		<div class="col-xxs-6 col-xs-3 col-sm-2">
+			<button type="submit" class="btn btn-sm btn-bs-outline" name="go" value="next">Nächste <span class="fa fa-chevron-right"></span></button>
 		</div>
 	</div>
 </form>
@@ -183,6 +248,7 @@ $content = '
 				<th>Mi</th>
 				<th>Do</th>
 				<th>Fr</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -193,10 +259,12 @@ $content = '
 				<td></td>
 				<td></td>
 				<td></td>
+				<td></td>
 			</tr>
 			'.implode(PHP_EOL, $list).'
 			<tr>
 				<td><button type="submit" class="btn btn-bs-outline">Speichern</button></td>
+				<td></td>
 				<td></td>
 				<td></td>
 				<td></td>

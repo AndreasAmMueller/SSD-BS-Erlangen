@@ -12,5 +12,5 @@ $(function() {
 
 	$('.no-js').hide();
 	$('.need-js').show();
-	$('[data-toggle="tooltip"]').tooltip();
+	$('[data-toggle="tooltip"]').tooltip().css('cursor', 'help');
 });

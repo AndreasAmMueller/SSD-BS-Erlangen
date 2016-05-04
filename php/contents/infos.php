@@ -109,6 +109,7 @@ $content = '
 <p>
 	Die Idee der Seite stammt von Hans Daniel und Daniel Zeltner, die das Ganze als IT-Projekt für die Anwendungsentwickler
 	in der 12. Klasse im Schuljahr 2014/15 gestartet haben.
+	<br>
 	Ein sogenanntes Refactoring und eine Design-Auffrischung fand durch <a href="http://am-wd.de" class="blank">Andreas Müller</a> statt.
 </p>
 <p>

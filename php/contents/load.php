@@ -28,18 +28,18 @@ else
 	if (in_array('manage', $_SESSION['permissions']) || in_array('admin', $_SESSION['permissions']))
 	{
 		$node = $menu->addNode('Verwalten', '#');
-		
+
 		if (in_array('admin', $_SESSION['permissions']))
 			$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-users"></span> Personal', URL.'/?p=user', $p == 'user'));
 		if (in_array('manage', $_SESSION['permissions']))
 		{
 			$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-calendar-check-o"></span> Einteilen', URL.'/?p=duty', $p == 'duty'));
-			$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-phone"></span> Diensthandy', URL.'/?p=mobile', $p == 'mobile'));
+			//$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-phone"></span> Diensthandy', URL.'/?p=mobile', $p == 'mobile'));
 		}
 		if (in_array('admin', $_SESSION['permissions']))
 			$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-cogs"></span> Allgemeines', URL.'/?p=general', $p == 'general'));
 	}
-	
+
 	$node = $menu->addNode($_SESSION['name'], '#');
 	$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-cogs"></span> Einstellungen', URL.'/?p=settings', $p == 'settings'));
 	$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-sign-out"></span> Logout', URL.'/?p=logout', $p == 'logout'));

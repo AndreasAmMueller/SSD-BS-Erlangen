@@ -30,21 +30,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 		}
 	}
 
-	if ($db->setAttendences(intval($_SESSION['id']), $att))
+	if ($db->setSick(intval($_SESSION['id']), $att))
 	{
 		$notify = '<div class="alert alert-success-outline">
-			<strong><span class="fa fa-check"></span></strong> Anwesenheit gespeichert.
+			<strong><span class="fa fa-check"></span></strong> Krankmeldung gespeichert.
 		</div>';
 	}
 	else
 	{
 		$notify = '<div class="alert alert-danger-outline">
-			<strong><span class="fa fa-exclamation-triangle"></span> Fehler:</strong> Anwesenheit konnte nicht gespeichert werden.
+			<strong><span class="fa fa-exclamation-triangle"></span> Fehler:</strong> Krankmeldung konnte nicht gespeichert werden.
 		</div>';
 	}
 }
-
-$page->addJS(URL.'/js/attendence.js');
 
 function isHoliday($array, $unix_time, $settings = null)
 {
@@ -87,6 +85,11 @@ $attendence = $db->getAttendence(intval($_SESSION['id']));
 $yearstart = strtotime($settings->start);
 $yearend = strtotime($settings->end);
 
+if ($yearstart < time())
+{
+	$yearstart = time();
+}
+
 if (date('N', $yearstart) == 1)
 {
 	$weekstart = $yearstart;
@@ -95,7 +98,7 @@ else {
 	$weekstart = strtotime('-'.(date('N', $yearstart) - 1).' day', $yearstart);
 }
 
-for ($week = $weekstart; $week <= $yearend; $week = strtotime('+ 1 week', $week))
+for ($week = $weekstart, $i = 0; $week <= $yearend && $i < 5; $week = strtotime('+ 1 week', $week), $i++)
 {
 	$w = date('W', $week);
 	$tmp = '<tr>';
@@ -171,69 +174,37 @@ for ($week = $weekstart; $week <= $yearend; $week = strtotime('+ 1 week', $week)
 	{
 		$tmp.= '<td><input type="checkbox" name="week_'.$w.'_fri" value="1" class="check_fri"></td>';
 	}
-
-	$tmp.= '<td>
-		<button type="button" class="btn btn-success-outline btn-xs set-week" week="'.$w.'"><span class="fa fa-check-circle"></span></button>
-		<button type="button" class="btn btn-danger-outline btn-xs unset-week" week="'.$w.'"><span class="fa fa-trash"></span></button>
-	</td>';
 	$tmp.= '</tr>';
 
 	$weeks[] = $tmp;
 }
 
 $content = '
-<h1><span class="fa fa-calendar"></span> Jahresanwesenheit '.date('Y', $yearstart).'/'.date('y', $yearend).'</h1>
-<form method="post" action="'.URL.'/?p=attendence">
+<h1><span class="fa fa-bed"></span> Krankmeldung</h1>
+<p>
+	Für eine Krankmeldung wird einfach die Anwesenheit ausgetragen.
+	<br />
+	Um die Übersicht zu vereinfachen, werden lediglich die nächsten 4 Wochen angezeigt.
+</p>
+<form method="post" action="'.URL.'/?p=sick">
 '.$notify.'
 <table class="table">
 	<thead>
 		<tr>
 			<th>KW</th>
 			<th>Schulwoche</th>
-			<th>
-				Mo
-				<button type="button" class="btn btn-xs btn-success-outline set-day" day="mon"><span class="fa fa-check-circle"></span></button>
-				<button type="button" class="btn btn-xs btn-danger-outline unset-day" day="mon"><span class="fa fa-trash"></span></button>
-			</th>
-			<th>
-				Di
-				<button type="button" class="btn btn-xs btn-success-outline set-day" day="tue"><span class="fa fa-check-circle"></span></button>
-				<button type="button" class="btn btn-xs btn-danger-outline unset-day" day="tue"><span class="fa fa-trash"></span></button>
-			</th>
-			<th>
-				Mi
-				<button type="button" class="btn btn-xs btn-success-outline set-day" day="wed"><span class="fa fa-check-circle"></span></button>
-				<button type="button" class="btn btn-xs btn-danger-outline unset-day" day="wed"><span class="fa fa-trash"></span></button>
-			</th>
-			<th>
-				Do
-				<button type="button" class="btn btn-xs btn-success-outline set-day" day="thu"><span class="fa fa-check-circle"></span></button>
-				<button type="button" class="btn btn-xs btn-danger-outline unset-day" day="thu"><span class="fa fa-trash"></span></button>
-			</th>
-			<th>
-				Fr
-				<button type="button" class="btn btn-xs btn-success-outline set-day" day="fri"><span class="fa fa-check-circle"></span></button>
-				<button type="button" class="btn btn-xs btn-danger-outline unset-day" day="fri"><span class="fa fa-trash"></span></button>
-			</th>
-			<th><button type="button" class="btn btn-xs btn-danger-outline unset"><span class="fa fa-trash"></span> Alles</button></th>
+			<th>Mo</th>
+			<th>Di</th>
+			<th>Mi</th>
+			<th>Do</th>
+			<th>Fr</th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
-			<td></td>
-			<td><button type="submit" class="btn btn-bs-outline">Speichern</button></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
 		'.implode(PHP_EOL, $weeks).'
 		<tr>
 			<td></td>
 			<td><button type="submit" class="btn btn-bs-outline">Speichern</button></td>
-			<td></td>
 			<td></td>
 			<td></td>
 			<td></td>

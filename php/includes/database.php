@@ -29,6 +29,7 @@ class Database {
 
 		$this->conn = new PDO('mysql:dbname='.$config['db_name'].';host='.$config['db_host'].';port='.$config['db_port'].';charset=utf8', $config['db_user'], $config['db_pass']);
 		$this->conn->setAttribute(PDO::ATTR_PERSISTENT, true);
+		$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$this->conn->query("SET lc_time_names = 'de_DE';");
 	}
 
@@ -550,16 +551,63 @@ ORDER BY
 		return $stmt->fetchAll(PDO::FETCH_OBJ);
 	}
 
+	public function setDuty($duty)
+	{
+		try
+		{
+			$this->conn->beginTransaction();
+
+			$this->conn->exec("DELETE FROM duties WHERE dut_year = ".intval($duty->year)." AND dut_week = ".intval($duty->week).";");
+
+			foreach ($duty->duty as $user => $d)
+			{
+				$this->conn->exec("INSERT INTO duties (
+	  dut_user
+	, dut_year
+	, dut_week
+	, dut_mon
+	, dut_tue
+	, dut_wed
+	, dut_thu
+	, dut_fri
+) VALUES (
+	  ".intval($user)."
+	, ".intval($duty->year)."
+	, ".intval($duty->week)."
+	, ".((isset($d->mon) && $d->mon) ? '1' : '0')."
+	, ".((isset($d->tue) && $d->tue) ? '1' : '0')."
+	, ".((isset($d->wed) && $d->wed) ? '1' : '0')."
+	, ".((isset($d->thu) && $d->thu) ? '1' : '0')."
+	, ".((isset($d->fri) && $d->fri) ? '1' : '0')."
+);");
+			}
+
+			$this->conn->commit();
+			return true;
+		}
+		catch (PDOException $e)
+		{
+			$this->conn->rollBack();
+			return false;
+		}
+	}
+
 	public function getPlan($week)
 	{
 		$sql = "SELECT
-	  usr_name AS name
+	  usr_id    AS id
+	, usr_name  AS name
 	, usr_class AS class
-	, dut_mon AS mon
-	, dut_tue AS tue
-	, dut_wed AS wed
-	, dut_thu AS thu
-	, dut_fri AS fri
+	, dut_mon   AS mon
+	, dut_tue   AS tue
+	, dut_wed   AS wed
+	, dut_thu   AS thu
+	, dut_fri   AS fri
+	, (CASE WHEN dut_mon = 1 AND att_mon = 0 THEN 1 ELSE 0 END) AS flag_mon
+	, (CASE WHEN dut_tue = 1 AND att_tue = 0 THEN 1 ELSE 0 END) AS flag_tue
+	, (CASE WHEN dut_wed = 1 AND att_wed = 0 THEN 1 ELSE 0 END) AS flag_wed
+	, (CASE WHEN dut_thu = 1 AND att_thu = 0 THEN 1 ELSE 0 END) AS flag_thu
+	, (CASE WHEN dut_fri = 1 AND att_fri = 0 THEN 1 ELSE 0 END) AS flag_fri
 FROM
 	duties
 FULL JOIN
@@ -573,14 +621,72 @@ JOIN
 WHERE
 	dut_year = YEAR(set_start)
 	AND
-	dut_week = 16
+	dut_week = :week
 ORDER by
 	usr_name
 ;";
 
-		return array();
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bindValue(':week', $week);
+		$stmt->execute();
+
+		return $stmt->fetchAll(PDO::FETCH_OBJ);
 	}
 
+	public function setSick($id, $attendences)
+	{
+		$sql = "SELECT YEAR(set_start) AS year FROM settings WHERE set_id = 1;";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->execute();
+
+		$year = $stmt->fetch(PDO::FETCH_OBJ)->year;
+
+		try
+		{
+			$this->conn->beginTransaction();
+
+			foreach ($attendences as $week => $att)
+			{
+				$this->conn->exec("DELETE FROM
+	attendences
+WHERE
+	att_user = ".intval($id)."
+	AND
+	att_year = ".intval($year)."
+	AND
+	att_week = ".intval($week)."
+;");
+
+				$this->conn->exec("INSERT INTO attendences (
+	  att_user
+	, att_year
+	, att_week
+	, att_mon
+	, att_tue
+	, att_wed
+	, att_thu
+	, att_fri
+) VALUES (
+	  ".intval($id)."
+	, ".intval($year)."
+	, ".intval($week)."
+	, ".((isset($att->mon) && $att->mon) ? '1' : '0')."
+	, ".((isset($att->tue) && $att->tue) ? '1' : '0')."
+	, ".((isset($att->wed) && $att->wed) ? '1' : '0')."
+	, ".((isset($att->thu) && $att->thu) ? '1' : '0')."
+	, ".((isset($att->fri) && $att->fri) ? '1' : '0')."
+);");
+			}
+
+			$this->conn->commit();
+			return true;
+		}
+		catch (PDOException $e)
+		{
+			$this->conn->rollBack();
+			return false;
+		}
+	}
 
 }
 

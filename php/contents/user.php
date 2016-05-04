@@ -34,7 +34,7 @@ if ($_POST)
 			$usr->mobile = trim($_POST['mobile']);
 			$usr->qualification = trim($_POST['qualification']);
 			$usr->permissions = isset($_POST['permissions']) ? $_POST['permissions'] : array();
-			
+
 			if (empty($usr->name) || empty($usr->email) || empty($usr->password))
 			{
 				$content = '<div class="alert alert-danger-outline">
@@ -44,7 +44,7 @@ if ($_POST)
 				$page->setContent($content);
 				return;
 			}
-			
+
 			if ($db->addUser($usr) == 0)
 			{
 				$content = '<div class="alert alert-danger-outline">
@@ -53,7 +53,7 @@ if ($_POST)
 				$page->setContent($content);
 				return;
 			}
-			
+
 			$content = '<div class="alert alert-success-outline">
 				<strong><span class="fa fa-check"></span></strong> Der Benutzer wurde angelegt.
 			</div>
@@ -71,9 +71,9 @@ if ($_POST)
 			$usr->mobile = trim($_POST['mobile']);
 			$usr->qualification = trim($_POST['qualification']);
 			$usr->permissions = isset($_POST['permissions']) ? $_POST['permissions'] : array();
-			
+
 			$db->updateUser($usr);
-			
+
 			$content = '<div class="alert alert-success-outline">
 				<strong><span class="fa fa-check"></span></strong> Die Daten wurden aktualisiert.
 			</div>
@@ -81,7 +81,14 @@ if ($_POST)
 			$page->setContent($content);
 			return;
 		case 'delete':
-			if ($db->deleteUser(intval($_POST['user'])))
+			if (intval($_POST['user']) == intval($_SESSION['id']))
+			{
+				$content = '<div class="alert alert-warning-outline">
+					<strong><span class="fa fa-info-circle"></span></strong> Der eigene Benutzer kann nicht gelöscht werden.
+				</div>
+				<a href="'.URL.'/?p=user" class="btn btn-bs-outline"><span class="fa fa-users"></span> Personal <span class="fa fa-fs fa-angle-double-right"></span></a>';
+			}
+			else if ($db->deleteUser(intval($_POST['user'])))
 			{
 				$content = '<div class="alert alert-success-outline">
 					<strong><span class="fa fa-check"></span></strong> Der Benutzer wurde gelöscht.
@@ -97,7 +104,7 @@ if ($_POST)
 			$page->setContent($content);
 			return;
 	}
-	
+
 	return;
 }
 
@@ -122,7 +129,7 @@ $content = '
 			</select>
 		</div>
 	</div>
-	
+
 	<div class="form-group" id="user-user">
 		<label class="col-sm-2 control-label">Benutzer</label>
 		<div class="col-sm-10">
@@ -132,28 +139,28 @@ $content = '
 			</select>
 		</div>
 	</div>
-	
+
 	<div class="form-group" id="user-name">
 		<label class="col-sm-2 control-label required">Name</label>
 		<div class="col-sm-10">
 			<input class="form-control" type="text" name="name">
 		</div>
 	</div>
-	
+
 	<div class="form-group" id="user-email">
 		<label class="col-sm-2 control-label required">E-Mail Adresse</label>
 		<div class="col-sm-10">
 			<input class="form-control" type="email" name="email">
 		</div>
 	</div>
-	
+
 	<div class="form-group" id="user-password">
 		<label class="col-sm-2 control-label">Passwort</label>
 		<div class="col-sm-10">
 			<input class="form-control" type="password" name="password">
 		</div>
 	</div>
-	
+
 	<div class="form-group" id="user-class">
 		<label class="col-sm-2 control-label">Klasse</label>
 		<div class="col-sm-4">
@@ -164,7 +171,7 @@ $content = '
 			<input class="form-control" type="text" name="room">
 		</div>
 	</div>
-	
+
 	<div class="form-group" id="user-mobile">
 		<label class="col-sm-2 control-label">Handynummer</label>
 		<div class="col-sm-4">
@@ -175,7 +182,7 @@ $content = '
 			<input class="form-control" type="text" name="qualification">
 		</div>
 	</div>
-	
+
 	<div class="form-group" id="user-permission">
 		<label class="control-label col-sm-2">Berechtigungen</label>
 		<div class="col-sm-10">
@@ -187,7 +194,7 @@ $content = '
 			</label>
 		</div>
 	</div>
-	
+
 	<div class="form-group">
 		<div class="col-sm-offset-2 col-sm-8 col-xs-6">
 			<button type="submit" class="btn btn-bs-outline"><span class="fa fa-play-circle"></span> Ausführen</button>

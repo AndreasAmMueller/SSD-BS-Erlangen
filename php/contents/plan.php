@@ -30,13 +30,13 @@ for ($i = $weekstart; $i <= $yearend; $i = strtotime('+ 1 week', $i))
 $list = array();
 foreach ($onDuty as $d)
 {
-	$list[] = '		<tr>
+	$list[] = '		<tr'.((isset($_SESSION['id']) && $_SESSION['id'] == $d->id) ? ' class="active"' : '').'>
 			<td>'.$d->name.(empty($d->class) ? '' : ' ('.$d->class.')').'</td>
-			<td'.(date('N') == 1 ? ' class="active"' : '').'>'.($d->mon == 1 ? '<span class="fa fa-check"></span>' : '').'</td>
-			<td'.(date('N') == 2 ? ' class="active"' : '').'>'.($d->tue == 1 ? '<span class="fa fa-check"></span>' : '').'</td>
-			<td'.(date('N') == 3 ? ' class="active"' : '').'>'.($d->wed == 1 ? '<span class="fa fa-check"></span>' : '').'</td>
-			<td'.(date('N') == 4 ? ' class="active"' : '').'>'.($d->thu == 1 ? '<span class="fa fa-check"></span>' : '').'</td>
-			<td'.(date('N') == 5 ? ' class="active"' : '').'>'.($d->fri == 1 ? '<span class="fa fa-check"></span>' : '').'</td>
+			<td'.(date('N') == 1 ? ' class="active"' : '').'>'.($d->mon == 1 ? '<span class="fa fa-check'.($d->flag_mon == 1 ? ' sick' : '').'"></span>' : '').'</td>
+			<td'.(date('N') == 2 ? ' class="active"' : '').'>'.($d->tue == 1 ? '<span class="fa fa-check'.($d->flag_tue == 1 ? ' sick' : '').'"></span>' : '').'</td>
+			<td'.(date('N') == 3 ? ' class="active"' : '').'>'.($d->wed == 1 ? '<span class="fa fa-check'.($d->flag_wed == 1 ? ' sick' : '').'"></span>' : '').'</td>
+			<td'.(date('N') == 4 ? ' class="active"' : '').'>'.($d->thu == 1 ? '<span class="fa fa-check'.($d->flag_thu == 1 ? ' sick' : '').'"></span>' : '').'</td>
+			<td'.(date('N') == 5 ? ' class="active"' : '').'>'.($d->fri == 1 ? '<span class="fa fa-check'.($d->flag_fri == 1 ? ' sick' : '').'"></span>' : '').'</td>
 		</tr>';
 }
 
@@ -49,8 +49,8 @@ $content = '
 	Im Normalfall alarmiert das Sekretariat den Schulsanitätsdienst nach Dienstplan (siehe unten) und/oder den Notruf 112 (bei Bedarf)
 </p>
 
-<h2>Dienstplan</h2>
-<form method="post" action="'.URL.'" class="form-inline">
+<h2>Dienstplan '.date('Y', $yearstart).'/'.date('y', $yearend).'</h2>
+<form method="post" action="'.URL.'/" class="form-inline">
 	<div class="form-group">
 		<label class="sr-only" for="week">Dienstwoche</label>
 		<select class="form-control" name="week" id="week">
@@ -78,6 +78,10 @@ $content = '
 		'.implode(PHP_EOL, $list).'
 	</tbody>
 </table>
+
+<div class="row">
+	<p class="text-right"><span class="sick">Krankheitsbedingt ausgefallen</span></p>
+</div>
 ';
 
 $page->setContent($content);

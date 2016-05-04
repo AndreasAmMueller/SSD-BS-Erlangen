@@ -1,3 +1,7 @@
+.content {
+	text-align: justify;
+}
+
 .need-js {
 	display: none;
 }
@@ -6,6 +10,29 @@
 	content: '*';
 	color: #f00;
 	margin-left: .1em;
+}
+
+.visible-xxs {
+	display: none;
+}
+
+.sick {
+	color: #f00;
+}
+
+@media (max-width: 479px) {
+	.visible-xxs {
+		display: block;
+	}
+	.hidden-xxs {
+		display: none;
+	}
+	.col-xxs-12 {
+		width: 100%;
+	}
+	.col-xxs-6 {
+		width: 50%;
+	}
 }
 
 @media (max-width: 990px) {
