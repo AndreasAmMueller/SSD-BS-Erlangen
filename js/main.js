@@ -7,6 +7,20 @@ if (typeof jQuery == 'undefined')
 	throw new Error('jQuery required');
 
 $(function() {
+	// Open links with class = blank on new tab/window
+	$('a').on('click', function(e) {
+		var href=$(this).attr('href');
+		
+		if (href == '#') {
+			e.preventDefault();
+		}
+		if ($(this).hasClass('blank')) {
+			e.preventDefault();
+			var site = window.open(href);
+			site.focus();
+		}
+	});
+	
 	// Enable the datepicker-functionality
 	$('.datepicker, .input-daterange').datepicker({
 		format: 'dd.mm.yyyy',

@@ -9,4 +9,6 @@ $config['db_pass'] = '';
 $config['db_name'] = '';
 
 $config['require_https'] = false;
+
+date_default_timezone_set("Europe/Berlin");
 ?>

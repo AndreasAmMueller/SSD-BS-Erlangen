@@ -30,21 +30,33 @@ for ($i = $weekstart; $i <= $yearend; $i = strtotime('+ 1 week', $i))
 	$w = date('W', $i);
 
 	if ($w == $week)
-		$week_select[] = '<option value="'.$w.'" selected="selected">KW '.$w.' | '.date('d.m.y', $i).' - '.date('d.m.y', strtotime('+ 4 day', $i)).'</option>';
+		$week_select[] = '<option value="'.$w.'" selected="selected">KW '.$w.' | '.date('d.m.y', $i).' - '.date('d.m.y', strtotime('+ 4 day', $i)).($w == date('W') ? ' &#9668;' : '').'</option>';
 	else
-		$week_select[] = '<option value="'.$w.'">KW '.$w.' | '.date('d.m.y', $i).' - '.date('d.m.y', strtotime('+ 4 day', $i)).'</option>';
+		$week_select[] = '<option value="'.$w.'">KW '.$w.' | '.date('d.m.y', $i).' - '.date('d.m.y', strtotime('+ 4 day', $i)).($w == date('W') ? ' &#9668;' : '').'</option>';
 }
 
 $list = array();
 foreach ($onDuty as $d)
 {
 	$list[] = '		<tr'.((isset($_SESSION['id']) && $_SESSION['id'] == $d->id) ? ' class="active"' : '').'>
-			<td>'.$d->name.(empty($d->class) ? '' : ' ('.$d->class.')').'</td>
-			<td'.(date('N') == 1 ? ' class="active"' : '').'>'.($d->mon == 1 ? '<span class="fa fa-check'.($d->flag_mon == 1 ? ' sick' : '').'"></span>' : '').'</td>
-			<td'.(date('N') == 2 ? ' class="active"' : '').'>'.($d->tue == 1 ? '<span class="fa fa-check'.($d->flag_tue == 1 ? ' sick' : '').'"></span>' : '').'</td>
-			<td'.(date('N') == 3 ? ' class="active"' : '').'>'.($d->wed == 1 ? '<span class="fa fa-check'.($d->flag_wed == 1 ? ' sick' : '').'"></span>' : '').'</td>
-			<td'.(date('N') == 4 ? ' class="active"' : '').'>'.($d->thu == 1 ? '<span class="fa fa-check'.($d->flag_thu == 1 ? ' sick' : '').'"></span>' : '').'</td>
-			<td'.(date('N') == 5 ? ' class="active"' : '').'>'.($d->fri == 1 ? '<span class="fa fa-check'.($d->flag_fri == 1 ? ' sick' : '').'"></span>' : '').'</td>
+			<td>
+				'.$d->name.(empty($d->class) ? '' : ' ('.$d->class.')').'
+			</td>
+			<td'.((date('N') == 1 && $week == date('W')) ? ' class="active"' : '').'>
+				'.($d->mon == 1 ? '<span class="fa fa-check'.($d->flag_mon == 1 ? ' sick' : '').'"></span>' : '').'
+			</td>
+			<td'.((date('N') == 2 && $week == date('W')) ? ' class="active"' : '').'>
+				'.($d->tue == 1 ? '<span class="fa fa-check'.($d->flag_tue == 1 ? ' sick' : '').'"></span>' : '').'
+			</td>
+			<td'.((date('N') == 3 && $week == date('W')) ? ' class="active"' : '').'>
+				'.($d->wed == 1 ? '<span class="fa fa-check'.($d->flag_wed == 1 ? ' sick' : '').'"></span>' : '').'
+			</td>
+			<td'.((date('N') == 4 && $week == date('W')) ? ' class="active"' : '').'>
+				'.($d->thu == 1 ? '<span class="fa fa-check'.($d->flag_thu == 1 ? ' sick' : '').'"></span>' : '').'
+			</td>
+			<td'.((date('N') == 5 && $week == date('W')) ? ' class="active"' : '').'>
+				'.($d->fri == 1 ? '<span class="fa fa-check'.($d->flag_fri == 1 ? ' sick' : '').'"></span>' : '').'
+			</td>
 		</tr>';
 }
 
