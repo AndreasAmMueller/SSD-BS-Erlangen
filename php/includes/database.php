@@ -29,7 +29,8 @@ class Database {
 		$this->conn = new PDO('mysql:dbname='.$config['db_name'].';host='.$config['db_host'].';port='.$config['db_port'].';charset=utf8', $config['db_user'], $config['db_pass']);
 		$this->conn->setAttribute(PDO::ATTR_PERSISTENT, true);
 		$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$this->conn->query("SET lc_time_names = 'de_DE';");
+		$this->conn->exec("SET NAMES utf8;");
+		$this->conn->exec("SET lc_time_names = 'de_DE';");
 	}
 
 	/**
@@ -547,11 +548,14 @@ ORDER BY
 		{
 			$this->conn->beginTransaction();
 
-			$this->conn->exec("DELETE FROM attendences WHERE att_user = ".intval($id)." AND att_year = ".intval($year).";");
+			$stmt = $this->conn->prepare("DELETE FROM attendences WHERE att_user = :user AND att_year = :year;");
+			$stmt->bindValue(':user', $id);
+			$stmt->bindValue(':year', $year);
+			$stmt->execute();
 
 			foreach ($attendences as $week => $att)
 			{
-				$this->conn->exec("INSERT INTO attendences (
+				$stmt = $this->conn->prepare("INSERT INTO attendences (
 	  att_user
 	, att_year
 	, att_week
@@ -561,15 +565,25 @@ ORDER BY
 	, att_thu
 	, att_fri
 ) VALUES (
-	  ".intval($id)."
-	, ".intval($year)."
-	, ".intval($week)."
-	, ".((isset($att->mon) && $att->mon) ? '1' : '0')."
-	, ".((isset($att->tue) && $att->tue) ? '1' : '0')."
-	, ".((isset($att->wed) && $att->wed) ? '1' : '0')."
-	, ".((isset($att->thu) && $att->thu) ? '1' : '0')."
-	, ".((isset($att->fri) && $att->fri) ? '1' : '0')."
+	  :id
+	, :year
+	, :week
+	, :mon
+	, :tue
+	, :wed
+	, :thu
+	, :fri
 );");
+
+				$stmt->bindValue(':id', $id);
+				$stmt->bindValue(':year', $year);
+				$stmt->bindValue(':week', $week);
+				$stmt->bindValue(':mon', (isset($att->mon) && $att->mon), PDO::PARAM_BOOL);
+				$stmt->bindValue(':tue', (isset($att->tue) && $att->tue), PDO::PARAM_BOOL);
+				$stmt->bindValue(':wed', (isset($att->wed) && $att->wed), PDO::PARAM_BOOL);
+				$stmt->bindValue(':thu', (isset($att->thu) && $att->thu), PDO::PARAM_BOOL);
+				$stmt->bindValue(':fri', (isset($att->fri) && $att->fri), PDO::PARAM_BOOL);
+				$stmt->execute();
 			}
 
 			$this->conn->commit();
@@ -632,11 +646,14 @@ ORDER BY
 		{
 			$this->conn->beginTransaction();
 
-			$this->conn->exec("DELETE FROM duties WHERE dut_year = ".intval($duty->year)." AND dut_week = ".intval($duty->week).";");
+			$stmt = $this->conn->prepare("DELETE FROM duties WHERE dut_year = :year AND dut_week = :week;");
+			$stmt->bindValue(':year', $duty->year);
+			$stmt->bindValue(':week', $duty->week);
+			$stmt->execute();
 
 			foreach ($duty->duty as $user => $d)
 			{
-				$this->conn->exec("INSERT INTO duties (
+				$stmt = $this->conn->prepare("INSERT INTO duties (
 	  dut_user
 	, dut_year
 	, dut_week
@@ -646,15 +663,25 @@ ORDER BY
 	, dut_thu
 	, dut_fri
 ) VALUES (
-	  ".intval($user)."
-	, ".intval($duty->year)."
-	, ".intval($duty->week)."
-	, ".((isset($d->mon) && $d->mon) ? '1' : '0')."
-	, ".((isset($d->tue) && $d->tue) ? '1' : '0')."
-	, ".((isset($d->wed) && $d->wed) ? '1' : '0')."
-	, ".((isset($d->thu) && $d->thu) ? '1' : '0')."
-	, ".((isset($d->fri) && $d->fri) ? '1' : '0')."
+	  :user
+	, :year
+	, :week
+	, :mon
+	, :tue
+	, :wed
+	, :thu
+	, :fri
 );");
+
+				$stmt->bindValue(':user', $user);
+				$stmt->bindValue(':year', $duty->year);
+				$stmt->bindValue(':week', $duty->week);
+				$stmt->bindValue(':mon', (isset($d->mon) && $d->mon), PDO::PARAM_BOOL);
+				$stmt->bindValue(':tue', (isset($d->tue) && $d->tue), PDO::PARAM_BOOL);
+				$stmt->bindValue(':wed', (isset($d->wed) && $d->wed), PDO::PARAM_BOOL);
+				$stmt->bindValue(':thu', (isset($d->thu) && $d->thu), PDO::PARAM_BOOL);
+				$stmt->bindValue(':fri', (isset($d->fri) && $d->fri), PDO::PARAM_BOOL);
+				$stmt->execute();
 			}
 
 			$this->conn->commit();
@@ -735,17 +762,21 @@ ORDER by
 
 			foreach ($attendences as $week => $att)
 			{
-				$this->conn->exec("DELETE FROM
+				$stmt = $this->conn->prepare("DELETE FROM
 	attendences
 WHERE
-	att_user = ".intval($id)."
+	att_user = :user
 	AND
-	att_year = ".intval($year)."
+	att_year = :year
 	AND
-	att_week = ".intval($week)."
+	att_week = :week
 ;");
+				$stmt->bindValue(':user', $id);
+				$stmt->bindValue(':year', $year);
+				$stmt->bindValue(':week', $week);
+				$stmt->execute();
 
-				$this->conn->exec("INSERT INTO attendences (
+				$stmt = $this->conn->prepare("INSERT INTO attendences (
 	  att_user
 	, att_year
 	, att_week
@@ -755,15 +786,25 @@ WHERE
 	, att_thu
 	, att_fri
 ) VALUES (
-	  ".intval($id)."
-	, ".intval($year)."
-	, ".intval($week)."
-	, ".((isset($att->mon) && $att->mon) ? '1' : '0')."
-	, ".((isset($att->tue) && $att->tue) ? '1' : '0')."
-	, ".((isset($att->wed) && $att->wed) ? '1' : '0')."
-	, ".((isset($att->thu) && $att->thu) ? '1' : '0')."
-	, ".((isset($att->fri) && $att->fri) ? '1' : '0')."
+	  :user
+	, :year
+	, :week
+	, :mon
+	, :tue
+	, :wed
+	, :thu
+	, :fri
 );");
+
+				$stmt->bindValue(':user', $id);
+				$stmt->bindValue(':year', $year);
+				$stmt->bindValue(':week', $week);
+				$stmt->bindValue(':mon', (isset($att->mon) && $att->mon), PDO::PARAM_BOOL);
+				$stmt->bindValue(':tue', (isset($att->tue) && $att->tue), PDO::PARAM_BOOL);
+				$stmt->bindValue(':wed', (isset($att->wed) && $att->wed), PDO::PARAM_BOOL);
+				$stmt->bindValue(':thu', (isset($att->thu) && $att->thu), PDO::PARAM_BOOL);
+				$stmt->bindValue(':fri', (isset($att->fri) && $att->fri), PDO::PARAM_BOOL);
+				$stmt->execute();
 			}
 
 			$this->conn->commit();

@@ -1,7 +1,7 @@
 --
 -- 01-structre.sql
 --
--- This file contains the basic structure for this website
+-- This file contains the basic structure for this website.
 -- Updates will be added in the folder.
 --
 -- Requirements for a easy usage:
@@ -13,15 +13,6 @@
 -- @copyright  (c) 2016 Andreas Mueller
 -- @license    MIT - http://am-wd.de/?p=about#license
 --
-
---
--- Clear database
---
-DROP TABLE IF EXISTS holidays;
-DROP TABLE IF EXISTS settings;
-DROP TABLE IF EXISTS duties;
-DROP TABLE IF EXISTS attendences;
-DROP TABLE IF EXISTS users;
 
 --
 -- Create the tables
@@ -73,8 +64,6 @@ CREATE TABLE settings (
 	, PRIMARY KEY (set_id)
 );
 
-INSERT INTO settings VALUES (1, '2015-09-15', '2016-08-26');
-
 CREATE TABLE holidays (
 	  hol_id     INT(11)       NOT NULL  AUTO_INCREMENT
 	, hol_start  DATE          NOT NULL                  COMMENT 'The first day of the holidays'
@@ -83,10 +72,3 @@ CREATE TABLE holidays (
 	, PRIMARY KEY (hol_id)
 	, UNIQUE KEY (hol_start, hol_end)
 );
-
---
--- Insert the first data
---
-INSERT INTO settings VALUES (1, '2015-09-15', '2016-08-26');
-INSERT INTO users (usr_email,usr_name, usr_password, usr_permissions)
-VALUES('admin@example.com', 'Administrator', '$2a$07$06b6438b8a609ba7eb765uiRxDTXjtkWFB5weeTFY1VNggzjxuLhq', 'manage,admin');

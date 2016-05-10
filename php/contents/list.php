@@ -43,7 +43,16 @@ $content = '
 	{
 		$content .= '
 		<tr>
-			<td>'.$user->name.'</td>
+			<td>';
+			if (in_array('manage', $_SESSION['permissions']))
+			{
+				$content .= '<span data-toggle="tooltip" data-placement="top" title="'.$user->qualification.'">'.$user->name.'</span>';
+			}
+			else
+			{
+				$content .= $user->name;
+			}
+			$content .= '</td>
 			<td>'.$user->email.'</td>
 			<td>'.$user->class.'</td>
 			<td>'.$user->room.'</td>

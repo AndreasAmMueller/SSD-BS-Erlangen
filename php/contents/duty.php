@@ -127,9 +127,9 @@ for ($i = $weekstart; $i <= $yearend; $i = strtotime('+ 1 week', $i))
 	$w = date('W', $i);
 
 	if ($w == $week)
-		$week_select[] = '<option value="'.$w.'" selected="selected">KW '.$w.' | '.date('d.m.y', $i).' - '.date('d.m.y', strtotime('+ 4 day', $i)).'</option>';
+		$week_select[] = '<option value="'.$w.'" selected="selected">KW '.$w.' | '.date('d.m.y', $i).' - '.date('d.m.y', strtotime('+ 4 day', $i)).($w == date('W') ? ' &#9668;' : '').'</option>';
 	else
-		$week_select[] = '<option value="'.$w.'">KW '.$w.' | '.date('d.m.y', $i).' - '.date('d.m.y', strtotime('+ 4 day', $i)).'</option>';
+		$week_select[] = '<option value="'.$w.'">KW '.$w.' | '.date('d.m.y', $i).' - '.date('d.m.y', strtotime('+ 4 day', $i)).($w == date('W') ? ' &#9668;' : '').'</option>';
 }
 
 $list = array();
