@@ -38,7 +38,7 @@ for ($i = $weekstart; $i <= $yearend; $i = strtotime('+ 1 week', $i))
 $list = array();
 foreach ($onDuty as $d)
 {
-	$list[] = '		<tr'.((isset($_SESSION['id']) && $_SESSION['id'] == $d->id) ? ' class="active"' : '').'>
+	$list[] = '		<tr'.((isset($_SESSION['id']) && $_SESSION['id'] == $d->id) ? ' class="info"' : '').'>
 			<td>
 				'.$d->name.(empty($d->class) ? '' : ' ('.$d->class.')').'
 			</td>
