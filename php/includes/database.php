@@ -271,6 +271,7 @@ WHERE
 ) VALUES (
 	  :email
 	, :name
+	, :firstname
 	, :password
 	, :mobile
 	, :class

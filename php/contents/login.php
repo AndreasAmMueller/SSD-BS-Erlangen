@@ -43,7 +43,7 @@ if ($_POST)
 
 		$db->updateUser($user);
 
-		$text = 'Hallo '.$user->name.',
+		$text = 'Hallo '.$user->fullname.',
 
 Dein Passwort wurde zurückgesetzt.
 Dein neues Passwort lautet: '.$pw.'
