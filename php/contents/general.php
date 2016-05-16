@@ -32,8 +32,8 @@ if ($_POST)
 {
 	$obj = new stdClass();
 
-	$start = trim($_POST['start']);
-	$end = trim($_POST['end']);
+	$start = htmlspecialchars(trim($_POST['start']));
+	$end = htmlspecialchars(trim($_POST['end']));
 
 	$obj->start = strtotime($start);
 	$obj->end   = strtotime($end);
@@ -81,7 +81,17 @@ if ($_POST)
 			{
 				$obj->id = intval($_POST['id']);
 
-				if (!$db->setHolidays($obj))
+				if ($db->setHolidays($obj))
+				{
+					$notify = '<div class="form-group">
+		<div class="col-sm-10 col-sm-offset-2">
+			<div class="alert alert-success-outline">
+				<strong><span class="fa fa-check"></span></strong> Ferien gespeichert.
+			</div>
+		</div>
+	</div>';
+				}
+				else
 				{
 					$notify = '<div class="form-group">
 		<div class="col-sm-10 col-sm-offset-2">
@@ -104,7 +114,17 @@ if ($_POST)
 			}
 			break;
 		case 'delete':
-			if (!$db->deleteHolidays(intval($_POST['id'])))
+			if ($db->deleteHolidays(intval($_POST['id'])))
+			{
+				$notify = '<div class="form-group">
+		<div class="col-sm-10 col-sm-offset-2">
+			<div class="alert alert-success-outline">
+				<strong><span class="fa fa-check"></span></strong> Ferien gelöscht.
+			</div>
+		</div>
+	</div>';
+			}
+			else
 			{
 				$notify = '<div class="form-group">
 		<div class="col-sm-10 col-sm-offset-2">
@@ -131,7 +151,7 @@ foreach ($db->getHolidays() as $h)
 						<td>
 							<div class="input-group input-daterange" id="datepicker">
 								<input type="text" class="form-control" name="start" placeholder="Erster Ferientag (dd.mm.yyyy)" value="'.date('d.m.Y', strtotime($h->start)).'" />
-								<span class="input-group-addon">to</span>
+								<span class="input-group-addon">bis</span>
 								<input type="text" class="form-control" name="end" placeholder="Letzter Ferientag (dd.mm.yyyy)" value="'.date('d.m.Y', strtotime($h->end)).'" />
 							</div>
 						</td>
@@ -176,7 +196,7 @@ $content = '
 	<div class="form-group">
 		<label class="control-label col-sm-2">Schulferien</label>
 		<div class="col-sm-10">
-			<p class="form-control-static">Es werden nur die Ferien des aktuellen Schuljahres angezeigt.</p>
+			<p class="form-control-static text-danger">Es werden nur die Ferien des aktuellen Schuljahres angezeigt.</p>
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -190,7 +210,7 @@ $content = '
 						<td>
 							<div class="input-group input-daterange">
 								<input type="text" class="form-control" name="start" placeholder="Erster Ferientag (dd.mm.yyyy)" />
-								<span class="input-group-addon">to</span>
+								<span class="input-group-addon">bis</span>
 								<input type="text" class="form-control" name="end" placeholder="Letzter Ferientag (dd.mm.yyyy)" />
 							</div>
 						</td>

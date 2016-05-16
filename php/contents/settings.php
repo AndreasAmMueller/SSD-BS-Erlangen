@@ -23,15 +23,16 @@ if ($_POST)
 {
 	$user = new stdClass();
 	$user->id            = $_SESSION['id'];
-	$user->name          = trim($_POST['name']);
-	$user->email         = trim($_POST['email']);
-	$user->password      = trim($_POST['password']);
-	$user->class         = trim($_POST['class']);
-	$user->room          = trim($_POST['room']);
-	$user->mobile        = trim($_POST['mobile']);
-	$user->qualification = trim($_POST['qualification']);
+	$user->name          = htmlspecialchars(trim($_POST['name']));
+	$user->firstname     = htmlspecialchars(trim($_POST['firstname']));
+	$user->email         = htmlspecialchars(trim($_POST['email']));
+	$user->password      = htmlspecialchars(trim($_POST['password']));
+	$user->class         = htmlspecialchars(trim($_POST['class']));
+	$user->room          = htmlspecialchars(trim($_POST['room']));
+	$user->mobile        = htmlspecialchars(trim($_POST['mobile']));
+	$user->qualification = htmlspecialchars(trim($_POST['qualification']));
 	
-	if (empty($user->name) || empty($user->email))
+	if (empty($user->name) || empty($user->firstname) || empty($user->email))
 	{
 		$notify = '<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
@@ -52,7 +53,7 @@ if ($_POST)
 					</div>
 				</div>
 			</div>';
-			$_SESSION['name'] = $user->name;
+			$_SESSION['name'] = $user->firstname.' '.$user->name;
 		}
 		else
 		{
@@ -78,8 +79,12 @@ $content = '
 	'.$notify.'
 
 	<div class="form-group">
-		<label class="col-sm-2 control-label required">Name</label>
-		<div class="col-sm-10">
+		<label class="col-xs-4 col-sm-2 control-label required">Vorname</label>
+		<div class="col-xs-8 col-sm-4">
+			<input class="form-control" type="text" name="firstname" value="'.$user->firstname.'" required>
+		</div>
+		<label class="col-xs-4 col-sm-2 control-label required">Nachname</label>
+		<div class="col-xs-8 col-sm-4">
 			<input class="form-control" type="text" name="name" value="'.$user->name.'" required>
 		</div>
 	</div>

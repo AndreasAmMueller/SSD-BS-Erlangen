@@ -121,7 +121,7 @@ for ($week = $weekstart; $week <= $yearend; $week = strtotime('+ 1 week', $week)
 	}
 	else
 	{
-		$tmp.= '<td><input type="checkbox" name="week_'.$w.'_mon" value="1" class="check_mon"></td>';
+		$tmp.= '<td><input type="checkbox" name="week_'.$w.'_mon" value="1"></td>';
 	}
 
 	// Tuesday
@@ -135,7 +135,7 @@ for ($week = $weekstart; $week <= $yearend; $week = strtotime('+ 1 week', $week)
 	}
 	else
 	{
-		$tmp.= '<td><input type="checkbox" name="week_'.$w.'_tue" value="1" class="check_tue"></td>';
+		$tmp.= '<td><input type="checkbox" name="week_'.$w.'_tue" value="1"></td>';
 	}
 
 	// Wednesday
@@ -149,7 +149,7 @@ for ($week = $weekstart; $week <= $yearend; $week = strtotime('+ 1 week', $week)
 	}
 	else
 	{
-		$tmp.= '<td><input type="checkbox" name="week_'.$w.'_wed" value="1" class="check_wed"></td>';
+		$tmp.= '<td><input type="checkbox" name="week_'.$w.'_wed" value="1"></td>';
 	}
 
 	// Thursday
@@ -163,7 +163,7 @@ for ($week = $weekstart; $week <= $yearend; $week = strtotime('+ 1 week', $week)
 	}
 	else
 	{
-		$tmp.= '<td><input type="checkbox" name="week_'.$w.'_thu" value="1" class="check_thu"></td>';
+		$tmp.= '<td><input type="checkbox" name="week_'.$w.'_thu" value="1"></td>';
 	}
 
 	// Friday
@@ -177,7 +177,7 @@ for ($week = $weekstart; $week <= $yearend; $week = strtotime('+ 1 week', $week)
 	}
 	else
 	{
-		$tmp.= '<td><input type="checkbox" name="week_'.$w.'_fri" value="1" class="check_fri"></td>';
+		$tmp.= '<td><input type="checkbox" name="week_'.$w.'_fri" value="1"></td>';
 	}
 
 	$tmp.= '<td>
@@ -191,6 +191,9 @@ for ($week = $weekstart; $week <= $yearend; $week = strtotime('+ 1 week', $week)
 
 $content = '
 <h1><span class="fa fa-calendar"></span> Jahresanwesenheit '.date('Y', $yearstart).'/'.date('y', $yearend).'</h1>
+<p>
+	Die Änderungen werden erst übernommen, wenn auf <em>Speichern</em> gedrückt wird.
+</p>
 <form method="post" action="'.URL.'/?p=attendence">
 '.$notify.'
 <table class="table">

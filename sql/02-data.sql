@@ -19,5 +19,5 @@
 -- Initial Password: p@ssw0rd
 --
 INSERT INTO settings VALUES (1, '2015-09-15', '2016-08-26');
-INSERT INTO users (usr_email,usr_name, usr_password, usr_permissions)
-VALUES('admin@example.com', 'Administrator', '$2a$07$06b6438b8a609ba7eb765uiRxDTXjtkWFB5weeTFY1VNggzjxuLhq', 'manage,admin');
+INSERT INTO users (usr_email, usr_name, usr_firstname, usr_password, usr_permissions)
+VALUES('admin@example.com', 'Administrator', 'Admin', '$2a$07$06b6438b8a609ba7eb765uiRxDTXjtkWFB5weeTFY1VNggzjxuLhq', 'manage,admin');

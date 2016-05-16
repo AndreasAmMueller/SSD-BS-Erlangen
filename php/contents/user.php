@@ -34,16 +34,17 @@ if ($_POST)
 	{
 		case 'new':
 			$usr = new stdClass();
-			$usr->name = trim($_POST['name']);
-			$usr->email = trim($_POST['email']);
-			$usr->password = trim($_POST['password']);
-			$usr->class = trim($_POST['class']);
-			$usr->room = trim($_POST['room']);
-			$usr->mobile = trim($_POST['mobile']);
-			$usr->qualification = trim($_POST['qualification']);
-			$usr->permissions = isset($_POST['permissions']) ? $_POST['permissions'] : array();
+			$usr->name          = htmlspecialchars(trim($_POST['name']));
+			$usr->firstname     = htmlspecialchars(trim($_POST['firstname']));
+			$usr->email         = htmlspecialchars(trim($_POST['email']));
+			$usr->password      = htmlspecialchars(trim($_POST['password']));
+			$usr->class         = htmlspecialchars(trim($_POST['class']));
+			$usr->room          = htmlspecialchars(trim($_POST['room']));
+			$usr->mobile        = htmlspecialchars(trim($_POST['mobile']));
+			$usr->qualification = htmlspecialchars(trim($_POST['qualification']));
+			$usr->permissions   = isset($_POST['permissions']) ? $_POST['permissions'] : array();
 
-			if (empty($usr->name) || empty($usr->email) || empty($usr->password))
+			if (empty($usr->name) || empty($usr->firstname) || empty($usr->email) || empty($usr->password))
 			{
 				$content = '<div class="alert alert-danger-outline">
 					<strong><span class="fa fa-bolt"></span> Fehler:</strong> Ein Pflichtfeld wurde nicht ausgefüllt.
@@ -70,15 +71,16 @@ if ($_POST)
 			return;
 		case 'edit':
 			$usr = new stdClass();
-			$usr->id = intval($_POST['user']);
-			$usr->name = trim($_POST['name']);
-			$usr->email = trim($_POST['email']);
-			$usr->password = trim($_POST['password']);
-			$usr->class = trim($_POST['class']);
-			$usr->room = trim($_POST['room']);
-			$usr->mobile = trim($_POST['mobile']);
-			$usr->qualification = trim($_POST['qualification']);
-			$usr->permissions = isset($_POST['permissions']) ? $_POST['permissions'] : array();
+			$usr->id            = intval($_POST['user']);
+			$usr->name          = htmlspecialchars(trim($_POST['name']));
+			$usr->firstname     = htmlspecialchars(trim($_POST['firstname']));
+			$usr->email         = htmlspecialchars(trim($_POST['email']));
+			$usr->password      = htmlspecialchars(trim($_POST['password']));
+			$usr->class         = htmlspecialchars(trim($_POST['class']));
+			$usr->room          = htmlspecialchars(trim($_POST['room']));
+			$usr->mobile        = htmlspecialchars(trim($_POST['mobile']));
+			$usr->qualification = htmlspecialchars(trim($_POST['qualification']));
+			$usr->permissions   = isset($_POST['permissions']) ? $_POST['permissions'] : array();
 
 			$db->updateUser($usr);
 
@@ -120,7 +122,7 @@ $users = $db->getUserList();
 $user_list = array();
 foreach ($users as $u)
 {
-	$user_list[] = '<option value="'.$u->id.'">'.$u->name.' ('.$u->email.')</option>';
+	$user_list[] = '<option value="'.$u->id.'">'.$u->fullname.' ('.$u->email.')</option>';
 }
 
 $content = '
@@ -149,8 +151,12 @@ $content = '
 	</div>
 
 	<div class="form-group" id="user-name">
-		<label class="col-sm-2 control-label required">Name</label>
-		<div class="col-sm-10">
+		<label class="col-xs-4 col-sm-2 control-label required">Vorname</label>
+		<div class="col-xs-8 col-sm-4">
+			<input class="form-control" type="text" name="firstname">
+		</div>
+		<label class="col-xs-4 col-sm-2 control-label required">Name</label>
+		<div class="col-xs-8 col-sm-4">
 			<input class="form-control" type="text" name="name">
 		</div>
 	</div>

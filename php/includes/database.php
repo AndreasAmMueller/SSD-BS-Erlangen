@@ -42,10 +42,10 @@ class Database {
 	public function getUserLogin($email)
 	{
 		$sql = "SELECT
-	  usr_id          AS id
-	, usr_name        AS name
-	, usr_permissions AS permissions
-	, usr_password    AS password
+	  usr_id                               AS id
+	, CONCAT(usr_firstname, ' ', usr_name) AS name
+	, usr_permissions                      AS permissions
+	, usr_password                         AS password
 FROM
 	users
 WHERE
@@ -83,14 +83,16 @@ WHERE
 	public function getUser($id)
 	{
 		$sql = "SELECT
-	  usr_id            AS id
-	, usr_name          AS name
-	, usr_email         AS email
-	, usr_class         AS class
-	, usr_room          AS room
-	, usr_mobile        AS mobile
-	, usr_qualification AS qualification
-	, usr_permissions   AS permissions
+	  usr_id                               AS id
+	, usr_name                             AS name
+	, usr_firstname                        AS firstname
+	, CONCAT(usr_firstname, ' ', usr_name) AS fullname
+	, usr_email                            AS email
+	, usr_class                            AS class
+	, usr_room                             AS room
+	, usr_mobile                           AS mobile
+	, usr_qualification                    AS qualification
+	, usr_permissions                      AS permissions
 FROM
 	users
 WHERE
@@ -129,14 +131,16 @@ WHERE
 	public function getUserList($order = 'name', $descending = false)
 	{
 		$sql = "SELECT
-	  usr_id            AS id
-	, usr_name          AS name
-	, usr_email         AS email
-	, usr_class         AS class
-	, usr_room          AS room
-	, usr_mobile        AS mobile
-	, usr_qualification AS qualification
-	, usr_permissions   AS permissions
+	  usr_id                               AS id
+	, usr_name                             AS name
+	, usr_firstname                        AS firstname
+	, CONCAT(usr_firstname, ' ', usr_name) AS fullname
+	, usr_email                            AS email
+	, usr_class                            AS class
+	, usr_room                             AS room
+	, usr_mobile                           AS mobile
+	, usr_qualification                    AS qualification
+	, usr_permissions                      AS permissions
 FROM
 	users
 ORDER BY
@@ -166,18 +170,24 @@ ORDER BY
 
 		$sql .= ";";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->execute();
-
-		$res = array();
-
-		foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as $el)
+		try
 		{
-			$el->permissions = explode(',', $el->permissions);
-			$res[] = $el;
-		}
+			$stmt = $this->conn->prepare($sql);
+			$stmt->execute();
 
-		return $res;
+			$res = array();
+			foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as $el)
+			{
+				$el->permissions = explode(',', $el->permissions);
+				$res[] = $el;
+			}
+	
+			return $res;
+		}
+		catch (PDOException $e)
+		{
+			return array();
+		}
 	}
 
 	/**
@@ -191,6 +201,7 @@ ORDER BY
 		$sql = "UPDATE users SET
 	  usr_email         = :email
 	, usr_name          = :name
+	, usr_firstname     = :firstname
 	, usr_mobile        = :mobile
 	, usr_class         = :class
 	, usr_room          = :room
@@ -213,22 +224,30 @@ WHERE
 	usr_id = :id
 ;";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(':email', $user->email);
-		$stmt->bindValue(':name', $user->name);
-		$stmt->bindValue(':mobile', $user->mobile);
-		$stmt->bindValue(':class', $user->class);
-		$stmt->bindValue(':room', $user->room);
-		$stmt->bindValue(':quali', $user->qualification);
-		$stmt->bindValue(':id', $user->id);
-
-		if (!empty($user->password))
-			$stmt->bindValue(':passwd', crypt($user->password, '$2a$07$'.md5(time()).'$'));
-
-		if (isset($user->permissions))
-			$stmt->bindValue(':perms', implode(',', $user->permissions));
-
-		return $stmt->execute();
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':email', $user->email);
+			$stmt->bindValue(':name', $user->name);
+			$stmt->bindValue(':firstname', $user->firstname);
+			$stmt->bindValue(':mobile', $user->mobile);
+			$stmt->bindValue(':class', $user->class);
+			$stmt->bindValue(':room', $user->room);
+			$stmt->bindValue(':quali', $user->qualification);
+			$stmt->bindValue(':id', $user->id);
+	
+			if (!empty($user->password))
+				$stmt->bindValue(':passwd', crypt($user->password, '$2a$07$'.md5(time()).'$'));
+	
+			if (isset($user->permissions))
+				$stmt->bindValue(':perms', implode(',', $user->permissions));
+	
+			return $stmt->execute();
+		}
+		catch (PDOException $e)
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -242,6 +261,7 @@ WHERE
 		$sql = "INSERT INTO users (
 	  usr_email
 	, usr_name
+	, usr_firstname
 	, usr_password
 	, usr_mobile
 	, usr_class
@@ -259,20 +279,28 @@ WHERE
 	, :perms
 );";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(':name', $user->name);
-		$stmt->bindValue(':email', $user->email);
-		$stmt->bindValue(':password', crypt($user->password, '$2a$07$'.md5(time()).'$'));
-		$stmt->bindValue(':class', $user->class);
-		$stmt->bindValue(':room', $user->room);
-		$stmt->bindValue(':mobile', $user->mobile);
-		$stmt->bindValue(':quali', $user->qualification);
-		$stmt->bindValue(':perms', implode(',', $user->permissions));
-
-		if (!$stmt->execute())
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':name', $user->name);
+			$stmt->bindValue(':firstname', $user->firstname);
+			$stmt->bindValue(':email', $user->email);
+			$stmt->bindValue(':password', crypt($user->password, '$2a$07$'.md5(time()).'$'));
+			$stmt->bindValue(':class', $user->class);
+			$stmt->bindValue(':room', $user->room);
+			$stmt->bindValue(':mobile', $user->mobile);
+			$stmt->bindValue(':quali', $user->qualification);
+			$stmt->bindValue(':perms', implode(',', $user->permissions));
+	
+			if (!$stmt->execute())
+				return 0;
+	
+			return $this->conn->lastInsertId();
+		}
+		catch (PDOException $e)
+		{
 			return 0;
-
-		return $this->conn->lastInsertId();
+		}
 	}
 
 	/**
@@ -285,10 +313,17 @@ WHERE
 	{
 		$sql = "DELETE FROM users WHERE usr_id = :id;";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(':id', $id);
-
-		return $stmt->execute();
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':id', $id);
+	
+			return $stmt->execute();
+		}
+		catch (PDOException $e)
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -307,12 +342,17 @@ WHERE
 	set_id = 1
 ;";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->execute();
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->execute();
 
-		$res = $stmt->fetch(PDO::FETCH_OBJ);
-
-		return $res;
+			return $stmt->fetch(PDO::FETCH_OBJ);
+		}
+		catch (PDOException $e)
+		{
+			return array();
+		}
 	}
 
 	/**
@@ -333,11 +373,18 @@ WHERE
 		if ($settings->end <= $settings->start)
 			return false;
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(':start', date('Y-m-d', $settings->start));
-		$stmt->bindValue(':end', date('Y-m-d', $settings->end));
-
-		return $stmt->execute();
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':start', date('Y-m-d', $settings->start));
+			$stmt->bindValue(':end', date('Y-m-d', $settings->end));
+	
+			return $stmt->execute();
+		}
+		catch (PDOException $e)
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -356,6 +403,8 @@ FROM
 	  holidays
 	, settings
 WHERE
+	set_id = 1
+	AND
 	set_start <= hol_end
 	AND
 	hol_start <= set_end
@@ -363,16 +412,24 @@ ORDER BY
 	hol_start
 ;";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->execute();
-
-		$res = $stmt->fetchAll(PDO::FETCH_OBJ);
-		foreach ($res as $r)
+		try
 		{
-			$r->weeks = explode(',', $r->weeks);
-		}
+			$stmt = $this->conn->prepare($sql);
+			$stmt->execute();
 
-		return $res;
+			$res = array();
+			foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as $r)
+			{
+				$r->weeks = explode(',', $r->weeks);
+				$res[] = $r;
+			}
+
+			return $res;
+		}
+		catch (PDOException $e)
+		{
+			return array();
+		}
 	}
 
 	/**
@@ -395,14 +452,21 @@ ORDER BY
 				$weeks[] = date('W', $i);
 		}
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(':start', date('Y-m-d', $range->start));
-		$stmt->bindValue(':end', date('Y-m-d', $range->end));
-		$stmt->bindValue(':weeks', implode(',', $weeks));
-		if ($range->id > 0)
-			$stmt->bindValue(':id', intval($range->id));
-
-		return $stmt->execute();
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':start', date('Y-m-d', $range->start));
+			$stmt->bindValue(':end', date('Y-m-d', $range->end));
+			$stmt->bindValue(':weeks', implode(',', $weeks));
+			if ($range->id > 0)
+				$stmt->bindValue(':id', intval($range->id));
+	
+			return $stmt->execute();
+		}
+		catch (PDOException $e)
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -418,10 +482,17 @@ ORDER BY
 
 		$sql = "DELETE FROM holidays WHERE hol_id = :id;";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(':id', intval($id));
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':id', intval($id));
 
-		return $stmt->execute();
+			return $stmt->execute();
+		}
+		catch (PDOException $e)
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -445,13 +516,20 @@ WHERE
 	DATE(:date) <= hol_end
 ;";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(':date', date('Y-m-d', $unix_time));
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':date', date('Y-m-d', $unix_time));
 
-		$stmt->execute();
+			$stmt->execute();
 
-		$res = $stmt->fetch(PDO::FETCH_OBJ);
-		return $res->count > 0;
+			$res = $stmt->fetch(PDO::FETCH_OBJ);
+			return $res->count > 0;
+		}
+		catch (PDOException $e)
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -464,8 +542,8 @@ WHERE
 	{
 		$sql = "SELECT
 	  att_week AS week
-	, att_tue  AS tue
 	, att_mon  AS mon
+	, att_tue  AS tue
 	, att_wed  AS wed
 	, att_thu  AS thu
 	, att_fri  AS fri
@@ -481,12 +559,19 @@ ORDER BY
 	att_year, att_week
 ;";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(':id', $id);
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':id', $id);
 
-		$stmt->execute();
+			$stmt->execute();
 
-		return $stmt->fetchAll(PDO::FETCH_OBJ);
+			return $stmt->fetchAll(PDO::FETCH_OBJ);
+		}
+		catch (PDOException $e)
+		{
+			return array();
+		}
 	}
 
 	/**
@@ -498,15 +583,15 @@ ORDER BY
 	public function getAttendenceWeek($week)
 	{
 		$sql = "SELECT
-	  usr_id            AS id
-	, usr_name          AS name
-	, usr_class         AS class
-	, usr_qualification AS qualification
-	, att_mon           AS mon
-	, att_tue           AS tue
-	, att_wed           AS wed
-	, att_thu           AS thu
-	, att_fri           AS fri
+	  usr_id                               AS id
+	, CONCAT(usr_firstname, ' ', usr_name) AS name
+	, usr_class                            AS class
+	, usr_qualification                    AS qualification
+	, att_mon                              AS mon
+	, att_tue                              AS tue
+	, att_wed                              AS wed
+	, att_thu                              AS thu
+	, att_fri                              AS fri
 FROM
 	attendences
 JOIN
@@ -521,12 +606,19 @@ ORDER BY
 	usr_name
 ;";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(':week', $week);
-
-		$stmt->execute();
-
-		return $stmt->fetchAll(PDO::FETCH_OBJ);
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':week', $week);
+	
+			$stmt->execute();
+	
+			return $stmt->fetchAll(PDO::FETCH_OBJ);
+		}
+		catch (PDOException $e)
+		{
+			return array();
+		}
 	}
 
 	/**
@@ -605,14 +697,14 @@ ORDER BY
 	public function getDuty($week)
 	{
 		$sql = "SELECT
-	  usr_id    AS id
-	, usr_name  AS name
-	, usr_class AS class
-	, dut_mon   AS mon
-	, dut_tue   AS tue
-	, dut_wed   AS wed
-	, dut_thu   AS thu
-	, dut_fri   AS fri
+	  usr_id                               AS id
+	, CONCAT(usr_firstname, ' ', usr_name) AS name
+	, usr_class                            AS class
+	, dut_mon                              AS mon
+	, dut_tue                              AS tue
+	, dut_wed                              AS wed
+	, dut_thu                              AS thu
+	, dut_fri                              AS fri
 FROM
 	duties
 JOIN
@@ -627,11 +719,18 @@ ORDER BY
 	usr_name
 ;";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(':week', $week);
-		$stmt->execute();
-
-		return $stmt->fetchAll(PDO::FETCH_OBJ);
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':week', $week);
+			$stmt->execute();
+			
+			return $stmt->fetchAll(PDO::FETCH_OBJ);
+		}
+		catch (PDOException $e)
+		{
+			return array();
+		}
 	}
 
 	/**
@@ -703,14 +802,14 @@ ORDER BY
 	public function getPlan($week)
 	{
 		$sql = "SELECT
-	  usr_id    AS id
-	, usr_name  AS name
-	, usr_class AS class
-	, dut_mon   AS mon
-	, dut_tue   AS tue
-	, dut_wed   AS wed
-	, dut_thu   AS thu
-	, dut_fri   AS fri
+	  usr_id                                                    AS id
+	, CONCAT(usr_firstname, ' ', usr_name)                      AS name
+	, usr_class                                                 AS class
+	, dut_mon                                                   AS mon
+	, dut_tue                                                   AS tue
+	, dut_wed                                                   AS wed
+	, dut_thu                                                   AS thu
+	, dut_fri                                                   AS fri
 	, (CASE WHEN dut_mon = 1 AND att_mon = 0 THEN 1 ELSE 0 END) AS flag_mon
 	, (CASE WHEN dut_tue = 1 AND att_tue = 0 THEN 1 ELSE 0 END) AS flag_tue
 	, (CASE WHEN dut_wed = 1 AND att_wed = 0 THEN 1 ELSE 0 END) AS flag_wed
@@ -718,7 +817,7 @@ ORDER BY
 	, (CASE WHEN dut_fri = 1 AND att_fri = 0 THEN 1 ELSE 0 END) AS flag_fri
 FROM
 	duties
-FULL JOIN
+JOIN
 	attendences ON att_user = dut_user
 	           AND att_year = dut_year
 	           AND att_week = dut_week
@@ -734,11 +833,18 @@ ORDER by
 	usr_name
 ;";
 
-		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(':week', $week);
-		$stmt->execute();
-
-		return $stmt->fetchAll(PDO::FETCH_OBJ);
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':week', $week);
+			$stmt->execute();
+			
+			return $stmt->fetchAll(PDO::FETCH_OBJ);
+		}
+		catch (PDOException $e)
+		{
+			return array();
+		}
 	}
 
 	/**

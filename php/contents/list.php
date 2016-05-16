@@ -46,11 +46,11 @@ $content = '
 			<td>';
 			if (in_array('manage', $_SESSION['permissions']))
 			{
-				$content .= '<span data-toggle="tooltip" data-placement="top" title="'.$user->qualification.'">'.$user->name.'</span>';
+				$content .= '<span data-toggle="tooltip" data-placement="top" title="'.$user->qualification.'">'.$user->fullname.'</span>';
 			}
 			else
 			{
-				$content .= $user->name;
+				$content .= $user->fullname;
 			}
 			$content .= '</td>
 			<td>'.$user->email.'</td>

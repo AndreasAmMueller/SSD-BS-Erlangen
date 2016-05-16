@@ -29,42 +29,55 @@ $message = '';
 
 if ($_POST)
 {
-	$subject = trim($_POST['subject']);
-	$message = trim($_POST['message']);
+	$subject = htmlspecialchars(trim($_POST['subject']));
+	$message = htmlspecialchars(trim($_POST['message']));
 	
-	if ($_POST['receiver'] == 'all')
-	{
-		$receiver = array();
-		foreach ($users as $u)
-			$receiver[] = $u->email;
-	}
-	else
-	{
-		$receiver = isset($_POST['selection']) ? $_POST['selection'] : array();
-	}
-	
-	if (count($receiver) == 0)
+	if (empty($subject) || empty($message))
 	{
 		$notify = '<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
 				<div class="alert alert-danger-outline">
-					<strong><span class="fa fa-bolt"></span> Fehler:</strong> Kein Empfänger ausgewählt.
+					<strong><span class="fa fa-bolt"></span> Fehler:</strong> Betreff oder Nachricht leer.
 				</div>
 			</div>
 		</div>';
 	}
 	else
 	{
-		foreach ($receiver as $to)
+		if ($_POST['receiver'] == 'all')
 		{
-			mail($to, $subject, $message, "From: ".$user->email, '-f'.$user->email);
+			$receiver = array();
+			foreach ($users as $u)
+				$receiver[] = $u->email;
+		}
+		else
+		{
+			$receiver = isset($_POST['selection']) ? $_POST['selection'] : array();
 		}
 		
-		$content = '<div class="alert alert-success-outline">
-			<strong><span class="fa fa-check"></span></strong> E-Mails erfolgreich versendet.
-		</div>';
-		$page->setContent($content);
-		return;
+		if (count($receiver) == 0)
+		{
+			$notify = '<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<div class="alert alert-danger-outline">
+						<strong><span class="fa fa-bolt"></span> Fehler:</strong> Kein Empfänger ausgewählt.
+					</div>
+				</div>
+			</div>';
+		}
+		else
+		{
+			foreach ($receiver as $to)
+			{
+				mail($to, $subject, $message, "From: ".$user->email, '-f'.$user->email);
+			}
+			
+			$content = '<div class="alert alert-success-outline">
+				<strong><span class="fa fa-check"></span></strong> E-Mails erfolgreich versendet.
+			</div>';
+			$page->setContent($content);
+			return;
+		}
 	}
 }
 
@@ -73,7 +86,7 @@ foreach ($users as $u)
 {
 	$select_list[] = '
 	<label class="checkbox-inline">
-		<input type="checkbox" name="selection[]" value="'.$u->email.'"> '.$u->name.' '.(empty($u->class) ? '' : '('.$u->class.')').'
+		<input type="checkbox" name="selection[]" value="'.$u->email.'"> '.$u->fullname.' '.(empty($u->class) ? '' : '('.$u->class.')').'
 	</label>
 	';
 }
@@ -86,7 +99,7 @@ $content = '
 	<div class="form-group">
 		<label class="control-label col-sm-2">Absender</label>
 		<div class="col-sm-10 form-control-static">
-			'.$user->name.' &lt;'.$user->email.'&gt;
+			'.$user->fullname.' &lt;'.$user->email.'&gt;
 		</div>
 	</div>
 	

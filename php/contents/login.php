@@ -13,6 +13,7 @@ if ($p == 'logout')
 	unset($_SESSION['id']);
 	unset($_SESSION['name']);
 	unset($_SESSION['remote_addr']);
+	session_unset();
 	session_destroy();
 	header('Refresh: 0; '.URL);
 	exit;
@@ -22,8 +23,8 @@ $error = '';
 
 if ($_POST)
 {
-	$mail = trim($_POST['email']);
-	$pass = trim($_POST['password']);
+	$mail = htmlspecialchars(trim($_POST['email']));
+	$pass = htmlspecialchars(trim($_POST['password']));
 
 	$user = $db->getUserLogin($mail);
 	if ($user == null)

@@ -100,7 +100,7 @@ $content = '
 </table>
 
 <div class="row">
-	<p class="text-right"><span class="sick">Krankheitsbedingt ausgefallen</span></p>
+	<p class="text-right"><span class="sick">*</span> Krankmeldung</p>
 </div>
 ';
 

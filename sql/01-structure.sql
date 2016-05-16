@@ -20,7 +20,8 @@
 CREATE TABLE users (
 	  usr_id             INT(11)       NOT NULL  AUTO_INCREMENT
 	, usr_email          VARCHAR(100)  NOT NULL
-	, usr_name           VARCHAR(100)  NOT NULL
+	, usr_name           VARCHAR(50)   NOT NULL
+	, usr_firstname      VARCHAR(50)   NOT NULL
 	, usr_password       VARCHAR(255)  NOT NULL
 	, usr_mobile         VARCHAR(30)
 	, usr_class          VARCHAR(20)

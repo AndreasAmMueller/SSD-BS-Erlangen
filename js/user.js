@@ -24,11 +24,16 @@ function action_switch() {
 			$('#user-permission').show();
 			
 			$('input[name=name]').val('');
+			$('input[name=firstname]').val('');
 			$('input[name=email]').val('');
 			$('input[name=class]').val('');
 			$('input[name=room]').val('');
 			$('input[name=mobile]').val('');
 			$('input[name=qualification]').val('');
+			
+			$.each($('input[type=checkbox]'), function(idx, box) {
+				$(box).prop('checked', false);
+			});
 			break;
 		case 'edit':
 			user_switch();
@@ -82,6 +87,7 @@ function user_switch() {
 				$('#user-permission').show();
 				
 				$('input[name=name]').val(res.data.name);
+				$('input[name=firstname]').val(res.data.firstname);
 				$('input[name=email]').val(res.data.email);
 				$('input[name=class]').val(res.data.class);
 				$('input[name=room]').val(res.data.room);
