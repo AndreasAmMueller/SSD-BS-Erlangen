@@ -47,7 +47,7 @@ else
 			//$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-phone"></span> Diensthandy', URL.'/?p=mobile', $p == 'mobile'));
 		}
 		if (in_array('admin', $_SESSION['permissions']))
-			$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-cogs"></span> Allgemeines', URL.'/?p=general', $p == 'general'));
+			$node->addSubmenu(new AMWD\MenuNode('<span class="fa fa-fs fa-cogs"></span> Schuljahr & Ferien', URL.'/?p=holidays', $p == 'holidays'));
 	}
 
 	$node = $menu->addNode($_SESSION['name'], '#');
@@ -97,8 +97,8 @@ switch ($p)
 	case 'mobile':
 		include_once __DIR__.'/mobile.php';
 		break;
-	case 'general':
-		include_once __DIR__.'/general.php';
+	case 'holidays':
+		include_once __DIR__.'/holidays.php';
 		break;
 	default:
 		include_once __DIR__.'/plan.php';

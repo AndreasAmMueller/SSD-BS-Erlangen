@@ -165,7 +165,7 @@ foreach ($db->getHolidays() as $h)
 }
 
 $content = '
-<h1><span class="fa fa-cogs"></span> Allgemeine Einstellungen</h1>
+<h1><span class="fa fa-cogs"></span> Schuljahr und Ferienzeiten</h1>
 <div class="form-horizontal">
 	'.$notify.'
 

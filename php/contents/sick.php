@@ -52,6 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 	}
 }
 
+$page->addJS(URL.'/js/sick.js');
+
 function isHoliday($array, $unix_time, $settings = null)
 {
 	if (count($array) <= 0 || intval($unix_time) <= 0)
@@ -95,7 +97,7 @@ $yearend = strtotime($settings->end);
 
 if ($yearstart < time())
 {
-	$yearstart = time();
+	$yearstart = strtotime(date('Y-m-d'));
 }
 
 if (date('N', $yearstart) == 1)

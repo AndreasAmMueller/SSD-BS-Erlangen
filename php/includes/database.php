@@ -73,6 +73,23 @@ WHERE
 			return null;
 		}
 	}
+	
+	public function lastLogin($id)
+	{
+		$sql = "UPDATE users SET usr_login = now() WHERE usr_id = :id;";
+		
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':id', $id);
+			
+			return $stmt->execute();
+		}
+		catch (PDOException $e)
+		{
+			return false;
+		}
+	}
 
 	/**
 	 * Gets all information to a user by its id.
@@ -572,6 +589,116 @@ ORDER BY
 		catch (PDOException $e)
 		{
 			return array();
+		}
+	}
+	
+	public function updateAttendence($user, $week, $day, $value)
+	{
+		// secure here against injections
+		$allowed_days = array('mon', 'tue', 'wed', 'thu', 'fri');
+		if (!in_array($day, $allowed_days))
+			return false;
+		
+		$sql = "SELECT
+	  YEAR(set_start) AS year
+	, att_user AS user
+	, att_mon  AS mon
+	, att_tue  AS tue
+	, att_wed  AS wed
+	, att_thu  AS thu
+	, att_fri  AS fri
+FROM
+	settings
+LEFT JOIN
+	attendences ON att_year = YEAR(set_start)
+	           AND att_user = :user
+	           AND att_week = :week
+;";
+		
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':user', $user);
+			$stmt->bindValue(':week', $week);
+			$stmt->execute();
+
+			$res = $stmt->fetch(PDO::FETCH_OBJ);
+			
+			// currently no entry in table
+			if ($res->user == null)
+			{
+				if (!$value)
+				{
+					// no entry and no attendence => SKIP
+					return true;
+				}
+				
+				// no entry but attendence => create new entry
+				$sql = "INSERT INTO attendences VALUES(:user, :week, :year, :mon, :tue, :wed, :thu, :fri);";
+				$stmt = $this->conn->prepare($sql);
+				$stmt->bindValue(':user', $user);
+				$stmt->bindValue(':week', $week);
+				$stmt->bindValue(':year', $res->year);
+				$stmt->bindValue(':mon', $day == 'mon');
+				$stmt->bindValue(':tue', $day == 'tue');
+				$stmt->bindValue(':wed', $day == 'wed');
+				$stmt->bindValue(':thu', $day == 'thu');
+				$stmt->bindValue(':fri', $day == 'fri');
+				return $stmt->execute();
+			}
+			// entry in table found => update/delete
+			else
+			{
+				$res->$day = $value ? 1 : 0;
+				
+				$found = false;
+				foreach ($allowed_days as $try)
+				{
+					if ($res->$try == 1)
+						$found = true;
+				}
+				
+				// found at least one day with attendence left
+				if ($found)
+				{
+					$sql = "UPDATE attendences
+SET
+	  att_mon = :mon
+	, att_tue = :tue
+	, att_wed = :wed
+	, att_thu = :thu
+	, att_fri = :fri
+WHERE
+	att_user = :user
+	AND att_week = :week
+	AND att_year = :year
+;";
+					$stmt = $this->conn->prepare($sql);
+					$stmt->bindValue(':user', $user);
+					$stmt->bindValue(':week', $week);
+					$stmt->bindValue(':year', $res->year);
+					$stmt->bindValue(':mon', $res->mon == 1);
+					$stmt->bindValue(':tue', $res->tue == 1);
+					$stmt->bindValue(':wed', $res->wed == 1);
+					$stmt->bindValue(':thu', $res->thu == 1);
+					$stmt->bindValue(':fri', $res->fri == 1);
+					return $stmt->execute();
+				}
+				// user not attendent in this week => delete row
+				else
+				{
+					$sql = "DELETE FROM attendences WHERE att_user = :user AND att_week = :week AND att_year = :year;";
+					$stmt = $this->conn->prepare($sql);
+					$stmt->bindValue(':user', $user);
+					$stmt->bindValue(':week', $week);
+					$stmt->bindValue(':year', $res->year);
+					return $stmt->execute();
+				}
+			}
+		}
+		catch (PDOException $e)
+		{
+			return false;
 		}
 	}
 

@@ -244,6 +244,9 @@ $content = '
 
 '.$notify.'
 
+<p>
+	Die Änderungen werden erst übernommen, wenn auf <em>Speichern</em> gedrückt wird.
+</p>
 <form method="post" action="'.URL.'/?p=duty">
 	<input type="hidden" name="action" value="save">
 	<input type="hidden" name="week" value="'.$week.'">

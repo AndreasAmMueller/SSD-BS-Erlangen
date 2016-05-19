@@ -16,7 +16,7 @@ function user_getUser($id)
 {
 	global $db;
 	
-	if (empty($_SESSION['id']))
+	if (empty($_SESSION['id']) || !in_array('admin', $_SESSION['permissions']))
 		return null;
 	
 	return $db->getUser($id);

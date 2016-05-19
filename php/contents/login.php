@@ -20,6 +20,7 @@ if ($p == 'logout')
 }
 
 $error = '';
+$mail = '';
 
 if ($_POST)
 {
@@ -61,6 +62,7 @@ Freundliche Grüße
 	}
 	else if (hash_equals($user->password, crypt($pass, $user->password)))
 	{
+		$db->lastLogin($user->id);
 		$_SESSION['id'] = $user->id;
 		$_SESSION['name'] = $user->name;
 		$_SESSION['permissions'] = $user->permissions;
@@ -85,7 +87,7 @@ $content = '
 
 		<div class="form-group">
 			<label>E-Mail Adresse</label>
-			<input type="email" class="form-control" name="email">
+			<input type="email" class="form-control" name="email" value="'.$mail.'">
 		</div>
 
 		<div class="form-group">

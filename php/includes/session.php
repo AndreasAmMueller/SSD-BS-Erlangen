@@ -35,7 +35,8 @@ if (!empty($_SESSION['remote_addr']))
 	$valid_ips[] = $_SESSION['remote_addr'];
 
 // Try to check if possible
-if (isset($check_ip) && $check_ip && !in_array($_SERVER['REMOTE_ADDR'], $valid_ips))
+if (isset($check_ip) && $check_ip
+	&& isset($_SESSION['remote_addr']) && !in_array($_SERVER['REMOTE_ADDR'], $valid_ips))
 {
 	header('HTTP/1.1 403 Forbidden');
 	die('The remote address changed while session was active.');

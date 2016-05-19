@@ -67,9 +67,15 @@ if ($_POST)
 		}
 		else
 		{
+			$mailHeader = array();
+			$mailHeader[] = 'From: '.$user->fullname.' <'.$user->email.'>';
+			$mailHeader[] = 'MIME-Version: 1.0';
+			$mailHeader[] = 'Content-Type: text/plain; charset=utf-8';
+			$mailHeader[] = 'X-Mailer: PHP/'.phpversion();
+			
 			foreach ($receiver as $to)
 			{
-				mail($to, $subject, $message, "From: ".$user->email, '-f'.$user->email);
+				mail($to, $subject, $message, implode("\r\n", $mailHeader), '-f'.$user->email);
 			}
 			
 			$content = '<div class="alert alert-success-outline">

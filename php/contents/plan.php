@@ -43,19 +43,19 @@ foreach ($onDuty as $d)
 				'.$d->name.(empty($d->class) ? '' : ' ('.$d->class.')').'
 			</td>
 			<td'.((date('N') == 1 && $week == date('W')) ? ' class="active"' : '').'>
-				'.($d->mon == 1 ? '<span class="fa fa-check'.($d->flag_mon == 1 ? ' sick' : '').'"></span>' : '').'
+				<span class="fa fa-fw'.($d->mon == 1 ? $d->flag_mon == 1 ? ' fa-exclamation sick' : ' fa-check' : '').'"></span>
 			</td>
 			<td'.((date('N') == 2 && $week == date('W')) ? ' class="active"' : '').'>
-				'.($d->tue == 1 ? '<span class="fa fa-check'.($d->flag_tue == 1 ? ' sick' : '').'"></span>' : '').'
+				<span class="fa fa-fw'.($d->tue == 1 ? $d->flag_tue == 1 ? ' fa-exclamation sick' : ' fa-check' : '').'"></span>
 			</td>
 			<td'.((date('N') == 3 && $week == date('W')) ? ' class="active"' : '').'>
-				'.($d->wed == 1 ? '<span class="fa fa-check'.($d->flag_wed == 1 ? ' sick' : '').'"></span>' : '').'
+				<span class="fa fa-fw'.($d->wed == 1 ? $d->flag_wed == 1 ? ' fa-exclamation sick' : ' fa-check' : '').'"></span>
 			</td>
 			<td'.((date('N') == 4 && $week == date('W')) ? ' class="active"' : '').'>
-				'.($d->thu == 1 ? '<span class="fa fa-check'.($d->flag_thu == 1 ? ' sick' : '').'"></span>' : '').'
+				<span class="fa fa-fw'.($d->thu == 1 ? $d->flag_thu == 1 ? ' fa-exclamation sick' : ' fa-check' : '').'"></span>
 			</td>
 			<td'.((date('N') == 5 && $week == date('W')) ? ' class="active"' : '').'>
-				'.($d->fri == 1 ? '<span class="fa fa-check'.($d->flag_fri == 1 ? ' sick' : '').'"></span>' : '').'
+				<span class="fa fa-fw'.($d->fri == 1 ? $d->flag_fri == 1 ? ' fa-exclamation sick' : ' fa-check' : '').'"></span>
 			</td>
 		</tr>';
 }
@@ -100,7 +100,7 @@ $content = '
 </table>
 
 <div class="row">
-	<p class="text-right"><span class="sick">*</span> Krankmeldung</p>
+	<p class="text-right"><span class="sick">*</span> Krank gemeldet</p>
 </div>
 ';
 

@@ -61,5 +61,30 @@ $(function() {
 		$.each($('input[type=checkbox]'), function(idx, box) {
 			$(box).prop('checked', false);
 		});
-	})
+	});
+	
+	$('input[name*="week_"]').click(function() {
+		var name = $(this).attr('name');
+		var checked = $(this).is(':checked');
+		var tmp = name.split('_');
+		
+		var week = parseInt(tmp[1]);
+		var day = tmp[2];
+		
+		var req = { week: week, day: day, value: checked };
+		api('att_update', req, function(result) {
+			if (result.error === '')
+			{
+				if (!result.data)
+					$(this).prop('checked', !checked);
+			}
+			else
+			{
+				console.log("Error:\n" + result.error);
+			}
+		});
+	});
+	
+	
+	
 });

@@ -28,6 +28,7 @@ CREATE TABLE users (
 	, usr_room           VARCHAR(20)
 	, usr_qualification  TEXT
 	, usr_permissions    VARCHAR(255)
+	, usr_login          DATETIME
 	, PRIMARY KEY (usr_id)
 	, UNIQUE KEY (usr_email)
 ) COMMENT='Initial Account is admin@example.com - p@ssw0rd';

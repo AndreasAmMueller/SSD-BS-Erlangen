@@ -26,6 +26,7 @@ function action_switch() {
 			$('input[name=name]').val('');
 			$('input[name=firstname]').val('');
 			$('input[name=email]').val('');
+			$('input[name=password]').val('').attr('placeholder', 'Das Passwort MUSS gesetzt werden');
 			$('input[name=class]').val('');
 			$('input[name=room]').val('');
 			$('input[name=mobile]').val('');
@@ -46,6 +47,8 @@ function action_switch() {
 			$('#user-class').hide();
 			$('#user-mobile').hide();
 			$('#user-permission').hide();
+			
+			$('input[name=password]').val('').attr('placeholder', 'Nur zum Ändern eintragen');
 			break;
 		default:
 			$('#user-user').hide();
