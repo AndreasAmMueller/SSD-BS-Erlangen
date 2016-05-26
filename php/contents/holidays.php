@@ -147,7 +147,7 @@ $holidays = array();
 foreach ($db->getHolidays() as $h)
 {
 	$holidays[] = '<tr>
-						<form action="'.URL.'/?p=general" method="post">
+						<form action="'.URL.'/?p=holidays" method="post">
 						<td>
 							<div class="input-group input-daterange" id="datepicker">
 								<input type="text" class="form-control" name="start" placeholder="Erster Ferientag (dd.mm.yyyy)" value="'.date('d.m.Y', strtotime($h->start)).'" />
@@ -169,7 +169,7 @@ $content = '
 <div class="form-horizontal">
 	'.$notify.'
 
-	<form method="post" action="'.URL.'/?p=general">
+	<form method="post" action="'.URL.'/?p=holidays">
 	<div class="form-group">
 		<label class="control-label col-sm-2">Schuljahresbeginn</label>
 		<div class="col-sm-10">
@@ -206,7 +206,7 @@ $content = '
 				</thead>
 				<tbody>
 					<tr>
-						<form action="'.URL.'/?p=general" method="post">
+						<form action="'.URL.'/?p=holidays" method="post">
 						<td>
 							<div class="input-group input-daterange">
 								<input type="text" class="form-control" name="start" placeholder="Erster Ferientag (dd.mm.yyyy)" />
