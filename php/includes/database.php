@@ -26,11 +26,9 @@ class Database {
 	{
 		global $config;
 
-		$this->conn = new PDO('mysql:dbname='.$config['db_name'].';host='.$config['db_host'].';port='.$config['db_port'].';charset=utf8', $config['db_user'], $config['db_pass']);
+		$this->conn = new PDO('sqlite:'.DIR.'/php/ssd.db');
 		$this->conn->setAttribute(PDO::ATTR_PERSISTENT, true);
 		$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$this->conn->exec("SET NAMES utf8;");
-		$this->conn->exec("SET lc_time_names = 'de_DE';");
 	}
 
 	/**
@@ -42,10 +40,10 @@ class Database {
 	public function getUserLogin($email)
 	{
 		$sql = "SELECT
-	  usr_id                               AS id
-	, CONCAT(usr_firstname, ' ', usr_name) AS name
-	, usr_permissions                      AS permissions
-	, usr_password                         AS password
+	  usr_id                            AS id
+	, usr_firstname || ' ' || usr_name  AS name
+	, usr_permissions                   AS permissions
+	, usr_password                      AS password
 FROM
 	users
 WHERE
@@ -76,7 +74,7 @@ WHERE
 	
 	public function lastLogin($id)
 	{
-		$sql = "UPDATE users SET usr_login = now() WHERE usr_id = :id;";
+		$sql = "UPDATE users SET usr_login = datetime('now', 'localtime') WHERE usr_id = :id;";
 		
 		try
 		{
@@ -100,16 +98,16 @@ WHERE
 	public function getUser($id)
 	{
 		$sql = "SELECT
-	  usr_id                               AS id
-	, usr_name                             AS name
-	, usr_firstname                        AS firstname
-	, CONCAT(usr_firstname, ' ', usr_name) AS fullname
-	, usr_email                            AS email
-	, usr_class                            AS class
-	, usr_room                             AS room
-	, usr_mobile                           AS mobile
-	, usr_qualification                    AS qualification
-	, usr_permissions                      AS permissions
+	  usr_id                            AS id
+	, usr_name                          AS name
+	, usr_firstname                     AS firstname
+	, usr_firstname || ' ' || usr_name  AS fullname
+	, usr_email                         AS email
+	, usr_class                         AS class
+	, usr_room                          AS room
+	, usr_mobile                        AS mobile
+	, usr_qualification                 AS qualification
+	, usr_permissions                   AS permissions
 FROM
 	users
 WHERE
@@ -148,16 +146,16 @@ WHERE
 	public function getUserList($order = 'name', $descending = false)
 	{
 		$sql = "SELECT
-	  usr_id                               AS id
-	, usr_name                             AS name
-	, usr_firstname                        AS firstname
-	, CONCAT(usr_firstname, ' ', usr_name) AS fullname
-	, usr_email                            AS email
-	, usr_class                            AS class
-	, usr_room                             AS room
-	, usr_mobile                           AS mobile
-	, usr_qualification                    AS qualification
-	, usr_permissions                      AS permissions
+	  usr_id                            AS id
+	, usr_name                          AS name
+	, usr_firstname                     AS firstname
+	, usr_firstname || ' ' || usr_name  AS fullname
+	, usr_email                         AS email
+	, usr_class                         AS class
+	, usr_room                          AS room
+	, usr_mobile                        AS mobile
+	, usr_qualification                 AS qualification
+	, usr_permissions                   AS permissions
 FROM
 	users
 ORDER BY
@@ -423,11 +421,11 @@ FROM
 WHERE
 	set_id = 1
 	AND
-	set_start <= hol_end
+	DATE(set_start) <= DATE(hol_end)
 	AND
-	hol_start <= set_end
+	DATE(hol_start) <= DATE(set_end)
 ORDER BY
-	hol_start
+	DATE(hol_start)
 ;";
 
 		try
@@ -529,9 +527,9 @@ ORDER BY
 FROM
 	holidays
 WHERE
-	hol_start <= DATE(:date)
+	DATE(hol_start) <= DATE(:date)
 	AND
-	DATE(:date) <= hol_end
+	DATE(:date) <= DATE(hol_end)
 ;";
 
 		try
@@ -572,7 +570,7 @@ JOIN
 WHERE
 	att_user = :id
 	AND
-	att_year = YEAR(set_start)
+	att_year = CAST(STRFTIME('%Y', set_start) AS INT)
 ORDER BY
 	att_year, att_week
 ;";
@@ -610,7 +608,7 @@ ORDER BY
 FROM
 	settings
 LEFT JOIN
-	attendences ON att_year = YEAR(set_start)
+	attendences ON att_year = CAST(STRFTIME('%Y', set_start) AS INT)
 	           AND att_user = :user
 	           AND att_week = :week
 ;";
@@ -711,15 +709,15 @@ WHERE
 	public function getAttendenceWeek($week)
 	{
 		$sql = "SELECT
-	  usr_id                               AS id
-	, CONCAT(usr_firstname, ' ', usr_name) AS name
-	, usr_class                            AS class
-	, usr_qualification                    AS qualification
-	, att_mon                              AS mon
-	, att_tue                              AS tue
-	, att_wed                              AS wed
-	, att_thu                              AS thu
-	, att_fri                              AS fri
+	  usr_id                            AS id
+	, usr_firstname || ' ' || usr_name  AS name
+	, usr_class                         AS class
+	, usr_qualification                 AS qualification
+	, att_mon                           AS mon
+	, att_tue                           AS tue
+	, att_wed                           AS wed
+	, att_thu                           AS thu
+	, att_fri                           AS fri
 FROM
 	attendences
 JOIN
@@ -727,7 +725,7 @@ JOIN
 JOIN
 	settings ON set_id = 1
 WHERE
-	att_year = YEAR(set_start)
+	att_year = CAST(STRFTIME('%Y', set_start) AS INT)
 	AND
 	att_week = :week
 ORDER BY
@@ -758,7 +756,7 @@ ORDER BY
 	 */
 	public function setAttendences($id, $attendences)
 	{
-		$sql = "SELECT YEAR(set_start) AS year FROM settings WHERE set_id = 1;";
+		$sql = "SELECT CAST(STRFTIME('%Y', set_start) AS INT) AS year FROM settings WHERE set_id = 1;";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 
@@ -825,14 +823,14 @@ ORDER BY
 	public function getDuty($week)
 	{
 		$sql = "SELECT
-	  usr_id                               AS id
-	, CONCAT(usr_firstname, ' ', usr_name) AS name
-	, usr_class                            AS class
-	, dut_mon                              AS mon
-	, dut_tue                              AS tue
-	, dut_wed                              AS wed
-	, dut_thu                              AS thu
-	, dut_fri                              AS fri
+	  usr_id                            AS id
+	, usr_firstname || ' ' || usr_name  AS name
+	, usr_class                         AS class
+	, dut_mon                           AS mon
+	, dut_tue                           AS tue
+	, dut_wed                           AS wed
+	, dut_thu                           AS thu
+	, dut_fri                           AS fri
 FROM
 	duties
 JOIN
@@ -840,7 +838,7 @@ JOIN
 JOIN
 	settings ON set_id = 1
 WHERE
-	dut_year = YEAR(set_start)
+	dut_year = CAST(STRFTIME('%Y', set_start) AS INT)
 	AND
 	dut_week = :week
 ORDER BY
@@ -931,7 +929,7 @@ ORDER BY
 	{
 		$sql = "SELECT
 	  usr_id                                                    AS id
-	, CONCAT(usr_firstname, ' ', usr_name)                      AS name
+	, usr_firstname || ' ' || usr_name                          AS name
 	, usr_class                                                 AS class
 	, dut_mon                                                   AS mon
 	, dut_tue                                                   AS tue
@@ -954,7 +952,7 @@ JOIN
 JOIN
 	settings ON set_id = 1
 WHERE
-	dut_year = YEAR(set_start)
+	dut_year = CAST(STRFTIME('%Y', set_start) AS INT)
 	AND
 	dut_week = :week
 ORDER by
@@ -984,7 +982,7 @@ ORDER by
 	 */
 	public function setSick($id, $attendences)
 	{
-		$sql = "SELECT YEAR(set_start) AS year FROM settings WHERE set_id = 1;";
+		$sql = "SELECT CAST(STRFTIME('%Y', set_start) AS INT) AS year FROM settings WHERE set_id = 1;";
 		$stmt = $this->conn->prepare($sql);
 		$stmt->execute();
 
