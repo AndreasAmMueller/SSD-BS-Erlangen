@@ -48,7 +48,7 @@ CREATE TABLE "attendences" (
 CREATE TABLE "duties" (
 	  "dut_user"  INTEGER        NOT NULL
 	, "dut_week"  INTEGER        NOT NULL
-	. "dut_year"  INTEGER        NOT NULL
+	, "dut_year"  INTEGER        NOT NULL
 	, "dut_mon"   INTEGER(1, 0)
 	, "dut_tue"   INTEGER(1, 0)
 	, "dut_wed"   INTEGER(1, 0)
@@ -69,5 +69,5 @@ CREATE TABLE "holidays" (
 	, "hol_start"  TEXT( 10, 0)  NOT NULL
 	, "hol_end"    TEXT( 10, 0)  NOT NULL
 	, "hol_weeks"  TEXT(100, 0)
-	CONSTRAINT "hol_uq" UNIQUE ("hol_start" ASC, "hol_end" ASC)
+	, CONSTRAINT "hol_uq" UNIQUE ("hol_start" ASC, "hol_end" ASC)
 );
