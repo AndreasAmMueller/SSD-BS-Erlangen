@@ -2,12 +2,11 @@
 global $config;
 $config = array();
 
-$config['db_host'] = '';
-$config['db_port'] = 3306;
-$config['db_user'] = '';
-$config['db_pass'] = '';
-$config['db_name'] = '';
+// Path to the database file (SQLite)
+// Relative to the project's root
+$config['db_path'] = 'sql/#ssd.db';
 
+// Only recommended with a valid SSL certificate
 $config['require_https'] = false;
 
 date_default_timezone_set("Europe/Berlin");

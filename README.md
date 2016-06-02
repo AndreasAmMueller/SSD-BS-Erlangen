@@ -18,22 +18,13 @@ Hier können die Sanitäter verwaltet und für den Dienst eingeteilt werden. Auf
  
 ## Installation
 
-- Eine Datenbank mit folgenden Anforderungen erstellen
-  * Engine: `InnoDB`
-  * Character set: `utf8`
-  * Collation: `utf8_bin`
-- Der Datenbankbenutzer der Seite benötigt mindestens die Rechte
-  * `SELECT`
-  * `INSERT`
-  * `UPDATE`
-  * `DELETE`
-- Den Quellcode in das Webverzeichnis legen (Bei _git clone_ nicht die submodules vergessen!)
-- Die Datenbank mittels der Skripte im Ordner `/sql` anlegen
-  * Es werden dabei das Schuljahr 2015/16 geschrieben
+- Den Quellcode in das Webverzeichnis legen (Nicht die submodules vergessen!)
+- Die Schreibrechte auf `/sql/#ssd.db` prüfen und ggf. setzen
+  * Es ist bereits das Schuljahr 2015/16
   * und ein Administrator (admin@example.com) angelegt. Passwort: `p@ssw0rd`
 - Die Datenbankverbindung schreiben
   * `config.php.example` kopiern/umbenennen in `config.php`
-  * Datei öffnen und die Parameter `$config['db_*']` ausfüllen
+  * Datei öffnen und Änderungen eintragen (soweit gewünscht)
 - Seite aufrufen, einloggen und _mind._ das __Passwort und E-Mail Adresse ändern__
 - In den Einstellungen das Schuljahr und die Ferien setzen
 - __Fertig__

@@ -26,7 +26,7 @@ class Database {
 	{
 		global $config;
 
-		$this->conn = new PDO('sqlite:'.DIR.'/sql/#ssd.db');
+		$this->conn = new PDO('sqlite:'.DIR.'/'.$config['db_path']);
 		$this->conn->setAttribute(PDO::ATTR_PERSISTENT, true);
 		$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}
