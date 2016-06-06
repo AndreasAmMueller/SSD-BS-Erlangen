@@ -52,13 +52,28 @@ Dein neues Passwort lautet: '.$pw.'
 Freundliche Grüße
   Der Admin';
 
-		mail($mail, '[SSD] Passwort vergessen', $text, "From: no-reply@".$_SERVER['HTTP_HOST'], '-fno-reply@'.$_SERVER['HTTP_HOST']);
-
-		$error = '<div class="form-group">
-			<div class="alert alert-success-outline">
-				<span class="fa fa-check"></span> Neues Passwort versendet.
-			</div>
-		</div>';
+		$mailHeader = array();
+		$mailHeader[] = 'From: SSD BS Erlangen <'.$config['email_sender'].'>';
+		$mailHeader[] = 'MIME-Version: 1.0';
+		$mailHeader[] = 'Content-Type: text/plain; charset=utf-8';
+		$mailHeader[] = 'X-Mailer: PHP/'.phpversion();
+		
+		if (mail($mail, '[SSD] Passwort vergessen', $text, implode("\r\n", $mailHeader), '-f '.$config['email_sender']))
+		{
+			$error = '<div class="form-group">
+				<div class="alert alert-success-outline">
+					<span class="fa fa-check"></span> Neues Passwort versendet.
+				</div>
+			</div>';
+		}
+		else
+		{
+			$error = '<div class="form-group">
+				<div class="alert alert-danger-outline">
+					<strong><span class="fa fa-bolt"></span> Fehler:</strong> E-Mail konnte nicht gesendet werden.
+				</div>
+			</div>';
+		}
 	}
 	else if (hash_equals($user->password, crypt($pass, $user->password)))
 	{

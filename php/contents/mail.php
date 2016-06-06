@@ -44,6 +44,8 @@ if ($_POST)
 	}
 	else
 	{
+		$message = 'Absender: '.$user->fullname.' <'.$user->email.'>'.PHP_EOL.PHP_EOL.$message;
+
 		if ($_POST['receiver'] == 'all')
 		{
 			$receiver = array();
@@ -68,14 +70,15 @@ if ($_POST)
 		else
 		{
 			$mailHeader = array();
-			$mailHeader[] = 'From: '.$user->fullname.' <'.$user->email.'>';
+			$mailHeader[] = 'From: SSD BS Erlangen <'.$config['email_sender'].'>';
+			$mailHeader[] = 'Reply-To: '.$user->email;
 			$mailHeader[] = 'MIME-Version: 1.0';
 			$mailHeader[] = 'Content-Type: text/plain; charset=utf-8';
 			$mailHeader[] = 'X-Mailer: PHP/'.phpversion();
 			
 			foreach ($receiver as $to)
 			{
-				mail($to, $subject, $message, implode("\r\n", $mailHeader), '-f'.$user->email);
+				mail($to, $subject, $message, implode("\r\n", $mailHeader), '-f'.$config['email_sender']);
 			}
 			
 			$content = '<div class="alert alert-success-outline">

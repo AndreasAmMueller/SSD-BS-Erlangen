@@ -34,6 +34,7 @@ $content = '
 			if (in_array('admin', $_SESSION['permissions']))
 			{
 				$content .= '<th>Rechte</th>';
+				$content .= '<th>Letzter Login</th>';
 			}
 			$content.= '
 		</tr>
@@ -64,6 +65,7 @@ $content = '
 			if (in_array('admin', $_SESSION['permissions']))
 			{
 				$content .= '<td>'.implode(', ', $user->permissions).'</td>';
+				$content .= '<td>'.($user->lastLogin == null ? '' : date('d.m.Y H:i', strtotime($user->lastLogin))).'</td>';
 			}
 			$content .= '
 		</tr>

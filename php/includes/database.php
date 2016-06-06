@@ -72,6 +72,12 @@ WHERE
 		}
 	}
 	
+	/**
+	 * Sets the current timestamp as last login date
+	 * 
+	 * @param   integer  $id  The users unique id.
+	 * @return  boolean       true on success, otherwise false.
+	 */
 	public function lastLogin($id)
 	{
 		$sql = "UPDATE users SET usr_login = datetime('now', 'localtime') WHERE usr_id = :id;";
@@ -156,6 +162,7 @@ WHERE
 	, usr_mobile                        AS mobile
 	, usr_qualification                 AS qualification
 	, usr_permissions                   AS permissions
+	, usr_login                         AS lastLogin
 FROM
 	users
 ORDER BY

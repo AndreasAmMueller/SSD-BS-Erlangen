@@ -17,7 +17,7 @@
 define('DIR', str_replace('\\', '/', __DIR__));
 
 // Define the URL variable
-$url = str_replace($_SERVER['DOCUMENT_ROOT'], 'http://'.$_SERVER['HTTP_HOST'], DIR);
+$url = str_replace($_SERVER['DOCUMENT_ROOT'], 'http://'.$_SERVER['HTTP_HOST'].'/', DIR);
 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') $url = str_replace('http', 'https', $url);
 define('URL', $url);
 
