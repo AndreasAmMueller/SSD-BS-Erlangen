@@ -18,7 +18,7 @@ $session_name = 'SSDBSER';
 
 // Set a value that indicates whether the IPs should be checked if possible.
 // Therefore the $_SESSION['remote_addr'] value has to be set at a proper position in your code.
-$check_ip = true;
+$check_ip = false;
 
 // Set the name.
 session_name($session_name);

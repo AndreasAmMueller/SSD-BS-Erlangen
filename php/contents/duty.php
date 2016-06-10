@@ -56,8 +56,8 @@ if (isset($_POST['go']))
 		$new_week = $week - 1;
 	else
 		$new_week = $week + 1;
-
-	if ($new_week < date('W', $yearend) || date('W', $yearstart) < $new_week)
+	
+	if ($new_week <= date('W', $yearend) || date('W', $yearstart) <= $new_week)
 		$week = $new_week;
 }
 else if (isset($_POST['action']) && $_POST['action'] == 'save')
