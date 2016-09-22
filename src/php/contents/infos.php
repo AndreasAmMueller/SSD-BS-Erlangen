@@ -76,9 +76,9 @@ $content = '
 	</thead>
 	<tbody>
 		<tr>
-			<td>Barbara Zenger</td>
+			<td>Barbara Michl</td>
 			<td>Kaufmännisches Gebäude, Zimmer K110</td>
-			<td><script type="text/javascript">document.write(["barbara.zenger", "bs-erlangen"].join("@"));</script>.de</td>
+			<td><script type="text/javascript">document.write(["barbara.michl", "bs-erlangen"].join("@"));</script>.de</td>
 		</tr>
 		<tr>
 			<td>Michael Münch</td>

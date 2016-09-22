@@ -156,6 +156,3 @@ flycheck_*.el
 
 # projectiles files
 .projectile
-
-### PROJECT ###
-php/config.php
