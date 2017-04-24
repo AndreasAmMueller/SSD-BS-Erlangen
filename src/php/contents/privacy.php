@@ -8,66 +8,56 @@
  * @license    MIT - http://am-wd.de/?p=about#license
  */
 
-$content = '
-<h1>Datenschutzerklärung</h1>
-<h4>Datenschutz</h4>
-<p>
-	Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst.
-	Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.
-	<br />
-	Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich.
-	Soweit auf unseren Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder E-Mail-Adressen) erhoben werden,
-	erfolgt dies, soweit möglich, stets auf freiwilliger Basis.
-	Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.
-	<br />
-	Wir weisen darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann.
-	Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich.
-</p>
+$siteUrl = 'privacy';
 
-<h4>Cookies</h4>
-<p>
-	Die Internetseiten verwenden teilweise so genannte Cookies. Cookies richten auf Ihrem Rechner keinen Schaden an und enthalten keine Viren.
-	Cookies dienen dazu, unser Angebot nutzerfreundlicher, effektiver und sicherer zu machen.
-	Cookies sind kleine Textdateien, die auf Ihrem Rechner abgelegt werden und die Ihr Browser speichert.
-	<br />
-	Die meisten der von uns verwendeten Cookies sind so genannte "Session-Cookies".
-	Sie werden nach Ende Ihres Besuchs automatisch gelöscht. Andere Cookies bleiben auf Ihrem Endgerät gespeichert, bis Sie diese löschen.
-	Diese Cookies ermöglichen es uns, Ihren Browser beim nächsten Besuch wiederzuerkennen.
-	<br />
-	Sie können Ihren Browser so einstellen, dass Sie über das Setzen von Cookies informiert werden und Cookies nur im Einzelfall erlauben,
-	die Annahme von Cookies für bestimmte Fälle oder generell ausschließen sowie das automatische Löschen der Cookies beim Schließen des Browser aktivieren. 
-	Bei der Deaktivierung von Cookies kann die Funktionalität dieser Website eingeschränkt sein.
-</p>
+$site = $db->getSite($siteUrl);
 
-<h4>Server-Log-Files</h4>
-<p>
-	Der Provider der Seiten erhebt und speichert automatisch Informationen in so genannten Server-Log Files, die Ihr Browser automatisch an uns übermittelt. 
-	Dies sind:
-	<ul>
-		<li>Browsertyp und -version</li>
-		<li>Verwendetes Betriebssystem</li>
-		<li>Referrer URL</li>
-		<li>Hostname des zugreifenden Rechners</li>
-		<li>Uhrzeit der Serveranfrage</li>
-	</ul>
-	Diese Daten sind nicht bestimmten Personen zuordenbar. Eine Zusammenführung dieser Daten mit anderen Datenquellen wird nicht vorgenommen.
-	Wir behalten uns vor, diese Daten nachträglich zu prüfen, wenn uns konkrete Anhaltspunkte für eine rechtswidrige Nutzung bekannt werden.
-</p>
-
-<h4>Kontaktformular</h4>
-<p>
-	Wenn Sie uns per Kontaktformular Anfragen zukommen lassen, werden Ihre Angaben aus dem Anfrageformular inklusive
-	der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert.
-	Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.
-</p>
-
-<h4>Auskunft, Löschung, Sperrung</h4>
-<p>
-	Sie haben jederzeit das Recht auf unentgeltliche Auskunft über Ihre gespeicherten personenbezogenen Daten,
-	deren Herkunft und Empfänger und den Zweck der Datenverarbeitung sowie ein Recht auf Berichtigung, Sperrung oder Löschung dieser Daten.
-	Hierzu sowie zu weiteren Fragen zum Thema personenbezogene Daten können Sie sich jederzeit unter der im Impressum angegebenen Adresse an uns wenden.
-</p>
-';
-$page->setContent($content);
+if (!empty($_POST['action']) && in_array('admin', $_SESSION['permissions']))
+{
+	switch ($_POST['action'])
+	{
+		case 'edit':
+			$content = '
+			<h1>Bearbeitung der Seite <em>?p='.$siteUrl.'</em></h1>
+			<form action="'.URL.'/index.php?p='.$siteUrl.'" method="post">
+				<div class="form-group">
+					<label>Quellcode</label>
+					<textarea name="content" placeholder="Sourcecode written in HTML" class="form-control" style="height: 400px">'.htmlentities($site->content).'</textarea>
+				</div>
+				
+				<div class="form-group" style="text-align: right">
+					<button type="submit" class="btn btn-success-outline" name="action" value="save">Speichern</button>
+					<a href="'.URL.'/index.php?p='.$siteUrl.'" class="btn btn-warning-outline">Abbrechen</a>
+				</div>
+			</form>
+			';
+			$page->setContent($content);
+			break;
+		
+		case 'save':
+			$site->content = $_POST['content'];
+			
+			$db->updateSite($site);
+			$site = $db->getSite($site->url);
+			
+			$page->setContent('<div class="alert alert-success-outline" role="alert"><span class="fa fa-check"></span> Seite gespeichert</div>');
+			$page->addContent($site->content);
+			$page->addContent('<form action="'.URL.'/index.php?p='.$siteUrl.'" method="post" style="text-align: right"><button type="submit" name="action" value="edit" class="btn btn-xs btn-bs">Bearbeiten</button></form>');
+			break;
+	}
+}
+else
+{
+	if (!empty($_SESSION['id']) && in_array('admin', $_SESSION['permissions']))
+	{
+		$page->setContent('<form action="'.URL.'/index.php?p='.$siteUrl.'" method="post" style="text-align: right"><button type="submit" name="action" value="edit" class="btn btn-xs btn-bs">Bearbeiten</button></form>');
+		$page->addContent($site->content);
+		$page->addContent('<form action="'.URL.'/index.php?p='.$siteUrl.'" method="post" style="text-align: right"><button type="submit" name="action" value="edit" class="btn btn-xs btn-bs">Bearbeiten</button></form>');
+	}
+	else
+	{
+		$page->setContent($site->content);
+	}
+}
 
 ?>

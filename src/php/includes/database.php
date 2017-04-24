@@ -1055,7 +1055,104 @@ WHERE
 			return false;
 		}
 	}
+	
+	/**
+	 * Gets all sites saved in the table.
+	 *
+	 * @return  object[]  List of sites.
+	 */
+	public function getSites()
+	{
+		$sql = "SELECT
+	  site_title    AS title
+	, site_url      AS url
+	, site_content  AS content
+FROM
+	sites
+ORDER BY
+	  site_order
+	, site_title
+;";
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->execute();
+			
+			return $stmt->fetchAll(PDO::FETCH_OBJ);
+		}
+		catch (PDOException $e)
+		{
+			return array();
+		}
+	}
+	
+	/**
+	 * Gets a site by its url query string.
+	 *
+	 * @param   string  $url  The query string value of 'p'.
+	 * @return  object        The specific site information or null.
+	 */
+	public function getSite($url)
+	{
+		$sql = "SELECT
+	  site_title    AS title
+	, site_url      AS url
+	, site_content  AS content
+FROM
+	sites
+WHERE
+	site_url = :url
+;";
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':url', $url);
+			$stmt->execute();
+			
+			$res = $stmt->fetchAll(PDO::FETCH_OBJ);
+			if (count($res) == 1)
+			{
+				return $res[0];
+			}
 
+			return null;
+		}
+		catch (PDOException $e)
+		{
+			return null;
+		}
+	}
+	
+	/**
+	 * Sets the modified site.
+	 *
+	 * @param   object  $site  The modified site object. Url has to be the same.
+	 * @return  boolean        True on success, otherwise false.
+	 */
+	public function updateSite($site)
+	{
+		$sql = "UPDATE
+	sites
+SET
+	  site_title = :title
+	, site_content = :content
+WHERE
+	site_url = :url
+;";
+
+		try
+		{
+			$stmt = $this->conn->prepare($sql);
+			$stmt->bindValue(':title', $site->title);
+			$stmt->bindValue(':content', $site->content);
+			$stmt->bindValue(':url', $site->url);
+			return $stmt->execute();
+		}
+		catch (PDOException $e)
+		{
+			return false;
+		}
+	}
 }
 
 ?>

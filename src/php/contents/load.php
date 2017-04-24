@@ -13,7 +13,7 @@ $p = isset($_GET['p']) ? trim($_GET['p']) : 'default';
 
 // Left menu
 $menu = new AMWD\Menu();
-$menu->addNode('<span class="fa fa-fs fa-home"></span> Home', URL, $p == 'default');
+//$menu->addNode('<span class="fa fa-fs fa-home"></span> Home', URL, $p == 'default');
 $menu->addNode('<span class="fa fa-fs fa-info-circle"></span> Infos', URL.'/?p=infos', $p == 'infos');
 
 if (!empty($_SESSION['id']))
